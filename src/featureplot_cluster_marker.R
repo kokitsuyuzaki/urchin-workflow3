@@ -14,7 +14,7 @@ for(i in seq_len(numSheets)){
     marker <- read_excel(infile2, i)
     if(nrow(marker) != 0){
         # Preprocessing
-        marker <- intersect(marker[,1], rownames(seurat.obj))
+        marker <- intersect(unlist(marker[,1]), rownames(seurat.obj))
         out.dir <- paste0(gsub("FINISH_cluster_marker", "", outfile), "cluster", i)
         dir.create(out.dir)
         # Plot

@@ -15,7 +15,7 @@ gmt <- eval(parse(text=paste0("gmt_go_", go, "_", db)))
 
 # Setting
 sce <- as.SingleCellExperiment(seurat.integrated)
-settingTGIF(sce, gmt, reducedDimNames="UMAP", assayNames="logcounts")
+settingTGIF(sce, gmt, reducedDimNames="UMAP", assayNames="logcounts", nbins=100)
 
 # Calculation
 calcTGIF(sce, ndim=5)
