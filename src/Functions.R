@@ -12,6 +12,11 @@ library("monocle3")
 library("velociraptor")
 library("scTGIF")
 library("RColorBrewer")
+library("reticulate")
+library("abind")
+library("purrr")
+library("tidyr")
+library("stringr")
 
 markers <- c("Hp-Hnf6", "Hp-Chordin", "Hp-Hox7", "Hp-FoxJ1", "Hp-BMP2_4", "Hp-Bra", "Hp-Delta", "Hp-SoxC", "Hp-Awh", "Hp-Gcm", "Hp-Blimp1", "Hp-Endo16", "Hp-Ephrin", "Hp-IrxA", "Hp-Hox11_13b", "Hp-FoxQ2", "Hp-MSP130", "Hp-Erg", "Hp-Ese", "Hp-FoxY", "Hp-Echn38", "Hp-Tph", "Hp-Pnlip-5", "Hp-Alx1", "Hp-Sm50")
 
@@ -20,6 +25,17 @@ sample_colors <- brewer.pal(8, "Dark2")
 sample_names <- c('cont-24h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 
 group_names <- c('cont-24h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
+
+conditions <- c("cont", "DAPT")
+
+times <- c("24h", "48h", "72h", "96h")
+
+seurat_clusters <- c(
+    "3", "29", "12", "1", "17", "41", "33", "23", "38", "40",
+    "25", "32", "36", "35", "39", "21", "30", "13", "43", "27",
+    "14", "4", "42", "2", "19", "31", "9", "37", "15", "22",
+    "8", "34", "11", "0", "16", "26", "28", "6", "5", "24",
+    "20", "18", "7", "10")
 
 blacklist_gene <- "Sp-Hrh2_3"
 
