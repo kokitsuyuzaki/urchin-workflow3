@@ -18,4 +18,11 @@ else
 	GTF="data/echinobase/sp5_0_GCF_geneid.gtf"
 fi
 
-velocyto run10x --samtools-threads 12 --samtools-memory 500000 $SAMPLE $GTF
+samtools --version
+INFILE="output/"$1"/"$2"/outs/possorted_genome_bam.bam"
+OUTFILE="output/"$1"/"$2"/outs/cellsorted_possorted_genome_bam.bam"
+if [ ! -e $OUTFILE ]; then
+	samtools sort -t CB -O BAM -o $OUTFILE $INFILE
+fi
+
+velocyto run10x $SAMPLE $GTF

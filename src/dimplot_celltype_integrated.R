@@ -17,5 +17,5 @@ dev.off()
 
 png(file=outfile2, width=2000, height=1000)
 DimPlot(seurat.integrated, reduction = "umap", split.by="sample",
-    ncol=4, label=FALSE, pt.size=2, label.size=6, cols=cols)
+    ncol=5, label=FALSE, pt.size=2, label.size=6, cols=cols)
 dev.off()

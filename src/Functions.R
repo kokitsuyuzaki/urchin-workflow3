@@ -22,13 +22,13 @@ markers <- c("Hp-Hnf6", "Hp-Chordin", "Hp-Hox7", "Hp-FoxJ1", "Hp-BMP2_4", "Hp-Br
 
 sample_colors <- brewer.pal(8, "Dark2")
 
-sample_names <- c('cont-24h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
+sample_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 
-group_names <- c('cont-24h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
+group_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 
 conditions <- c("cont", "DAPT")
 
-times <- c("24h", "48h", "72h", "96h")
+times <- c("24h", "36h", "48h", "72h", "96h")
 
 seurat_clusters <- c(
     "3", "29", "12", "1", "17", "41", "33", "23", "38", "40",
@@ -77,8 +77,12 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
         which(seurat.integrated@meta.data$sample == group_names[7])]
     seurat.each8 <- seurat.integrated[,
         which(seurat.integrated@meta.data$sample == group_names[8])]
+    seurat.each9 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[9])]
+    seurat.each10 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[10])]
     list(seurat.each1, seurat.each2, seurat.each3, seurat.each4,
-        seurat.each5, seurat.each6, seurat.each7, seurat.each8)
+        seurat.each5, seurat.each6, seurat.each7, seurat.each8, seurat.each9, seurat.each10)
 }
 
 .panelPlot <- function(seuratList, group_names, features){
@@ -93,7 +97,7 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     names(gList) <- group_names
     gList <- gList[order(names(gList))]
     # Patch work
-    (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]]) / (gList[[5]] | gList[[6]] | gList[[7]] | gList[[8]])
+    (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]] | gList[[5]]) / (gList[[6]] | gList[[7]] | gList[[8]] | gList[[9]] | gList[[10]])
 }
 
 .BarPlot <- function(seurat.integrated){
@@ -106,6 +110,7 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     g <- g + xlab('Cell type')
     g <- g + ylab('# cells')
     g <- g + facet_wrap(~sample, ncol=1)
+    g <- g + theme(strip.text.x = element_text(size = 25))
     g
 }
 
@@ -124,8 +129,8 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
 }
 
 .sortByDiff <- function(data){
-    cont_data <- data[data[, "sample"] %in% c('cont-24h', 'cont-48h', 'cont-72h', 'cont-96h'), ]
-    DAPT_data <- data[data[, "sample"] %in% c('DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h'), ]
+    cont_data <- data[data[, "sample"] %in% c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h'), ]
+    DAPT_data <- data[data[, "sample"] %in% c('DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h'), ]
     sum_cont_data <- .sumByCelltype(cont_data)
     sum_DAPT_data <- .sumByCelltype(DAPT_data)
     diff <- sum_DAPT_data[,2] - sum_cont_data[,2]

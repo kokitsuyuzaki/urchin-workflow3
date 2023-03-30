@@ -11,4 +11,4 @@
 SLURM_RESTART_COUNT=2
 
 rm -rf $2
-Rscript src/seurat2anndata_integrated.R $@
+Rscript src/seurat2anndata_cont.R $@

@@ -10,6 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-mkdir -p output/$1/aggr/velocyto
-
 python src/aggr_loom.py $@

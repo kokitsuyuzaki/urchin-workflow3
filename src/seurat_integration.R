@@ -5,8 +5,8 @@ set.seed(1234)
 db <- commandArgs(trailingOnly=TRUE)[1]
 outfile <- commandArgs(trailingOnly=TRUE)[2]
 infiles <- paste0("output/", db, "/",
-    c("cont-24h", "cont-48h", "cont-72h", "cont-96h",
-        "DAPT-24h", "DAPT-48h", "DAPT-72h", "DAPT-96h"), "/seurat.RData")
+    c("cont-24h", "cont-36h", "cont-48h", "cont-72h", "cont-96h",
+        "DAPT-24h", "DAPT-36h", "DAPT-48h", "DAPT-72h", "DAPT-96h"), "/seurat.RData")
 
 # Loading
 seurat.list <- lapply(infiles, function(x){

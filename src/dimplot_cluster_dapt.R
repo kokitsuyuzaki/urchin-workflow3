@@ -10,13 +10,13 @@ load(infile)
 
 # Plot
 png(file=outfile1, width=1200, height=600)
-p1 <- DimPlot(seurat.integrated, reduction = "umap", group.by="sample", label=TRUE, pt.size=2, label.size=6)
+p1 <- DimPlot(seurat.dapt, reduction = "umap", group.by="sample", label=TRUE, pt.size=2, label.size=6)
 # + NoLegend()
-p2 <- DimPlot(seurat.integrated, reduction = "umap", label=TRUE, pt.size=2, label.size=6) + NoLegend()
+p2 <- DimPlot(seurat.dapt, reduction = "umap", label=TRUE, pt.size=2, label.size=6) + NoLegend()
 p1 + p2
 dev.off()
 
 png(file=outfile2, width=2000, height=1000)
-DimPlot(seurat.integrated, reduction = "umap", split.by="sample",
+DimPlot(seurat.dapt, reduction = "umap", split.by="sample",
     ncol=5, label=TRUE, pt.size=2, label.size=6) + NoLegend()
 dev.off()

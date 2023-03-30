@@ -6,12 +6,9 @@ from snakemake.utils import min_version
 #################################
 min_version("6.5.3")
 
-SAMPLES = ['cont-24h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h']
-
+SAMPLES = ['cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h']
 DBS = ['hpbase', 'echinobase']
-
 MODES = ['deterministic', 'stochastic', 'dynamical']
-
 SAMPLE_PLOTS = ['elbowplot.png',
     'dimplot_cluster.png', 'featureplot_ncount_rna.png',
     'featureplot_nfeature_rna.png', 'featureplot_percent_mt.png',
@@ -20,7 +17,6 @@ SAMPLE_PLOTS = ['elbowplot.png',
     'marker/FINISH_marker', 'marker/FINISH_cluster_marker',
     'featureplot_doublet.png', 
     'plot_cells_trajectory.png']
-
 INTEGRATED_PLOTS = ['elbowplot.png', 'barplot.png',
     'dimplot_cluster.png', 'dimplot_cluster_splitby.png',
     'featureplot_ncount_rna.png', 'featureplot_ncount_rna_splitby.png',
@@ -33,31 +29,31 @@ INTEGRATED_PLOTS = ['elbowplot.png', 'barplot.png',
     'featureplot_doublet.png', 'featureplot_doublet_splitby.png',
     'plot_cells_trajectory.png']
 
+CONT_PLOTS = ['elbowplot.png', 'dimplot_cluster.png', 'dimplot_cluster_splitby.png', 'plot_cells_trajectory.png']
+
+DAPT_PLOTS = CONT_PLOTS
+
 rule all:
     input:
+        # Basic Plots
         expand('plot/{db}/{sample}/{sample_plot}',
             sample=SAMPLES, db=DBS, sample_plot=SAMPLE_PLOTS),
         expand('plot/{db}/integrated/{integrated_plot}',
             db=DBS, integrated_plot=INTEGRATED_PLOTS),
+        expand('plot/{db}/cont/{cont_plot}',
+            db=DBS, cont_plot=CONT_PLOTS),
+        expand('plot/{db}/dapt/{dapt_plot}',
+            db=DBS, dapt_plot=DAPT_PLOTS),
+        # Velocity Plots (Sample)
         expand('plot/{db}/{sample}/scv_pl_proportions_{sample}_dynamical.png',
             db=DBS, sample=SAMPLES, mode=MODES),
-        expand('plot/{db}/integrated/scv_pl_proportions_integrated_dynamical.png',
-            db=DBS, mode=MODES),
         expand('plot/{db}/{sample}/scv_pl_velocity_embedding_stream_{sample}_{mode}.png',
-            db=DBS, sample=SAMPLES, mode=MODES),
-        expand('plot/{db}/integrated/scv_pl_velocity_embedding_stream_integrated_{mode}.png',
             db=DBS, sample=SAMPLES, mode=MODES),
         expand('plot/{db}/{sample}/scv_pl_velocity_embedding_{sample}_{mode}.png',
             db=DBS, sample=SAMPLES, mode=MODES),
-        expand('plot/{db}/integrated/scv_pl_velocity_embedding_integrated_{mode}.png',
-            db=DBS, sample=SAMPLES, mode=MODES),
         expand('plot/{db}/{sample}/scv_pl_latenttime_{sample}_dynamical.png',
             db=DBS, sample=SAMPLES),
-        expand('plot/{db}/integrated/scv_pl_latenttime_integrated_dynamical.png',
-            db=DBS, sample=SAMPLES),
         expand('plot/{db}/{sample}/scv_pl_heatmap_{sample}_dynamical.png',
-            db=DBS, sample=SAMPLES),
-        expand('plot/{db}/integrated/scv_pl_heatmap_integrated_dynamical.png',
             db=DBS, sample=SAMPLES),
         expand('plot/{db}/{sample}/scv_pl_velocity_markers_{sample}_dynamical_1.png',
             db=DBS, sample=SAMPLES),
@@ -65,11 +61,56 @@ rule all:
             db=DBS, sample=SAMPLES),
         expand('plot/{db}/{sample}/scv_pl_velocity_markers_{sample}_dynamical_3.png',
             db=DBS, sample=SAMPLES),
+        # Velocity Plots (Integrated)
+        expand('plot/{db}/integrated/scv_pl_proportions_integrated_dynamical.png',
+            db=DBS, mode=MODES),
+        expand('plot/{db}/integrated/scv_pl_velocity_embedding_stream_integrated_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/integrated/scv_pl_velocity_embedding_integrated_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/integrated/scv_pl_latenttime_integrated_dynamical.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/integrated/scv_pl_heatmap_integrated_dynamical.png',
+            db=DBS, sample=SAMPLES),
         expand('plot/{db}/integrated/scv_pl_velocity_markers_integrated_dynamical_1.png',
             db=DBS, sample=SAMPLES),
         expand('plot/{db}/integrated/scv_pl_velocity_markers_integrated_dynamical_2.png',
             db=DBS, sample=SAMPLES),
         expand('plot/{db}/integrated/scv_pl_velocity_markers_integrated_dynamical_3.png',
+            db=DBS, sample=SAMPLES),
+        # Control
+        expand('plot/{db}/cont/scv_pl_proportions_cont_dynamical.png',
+            db=DBS, mode=MODES),
+        expand('plot/{db}/cont/scv_pl_velocity_embedding_stream_cont_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/cont/scv_pl_velocity_embedding_cont_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/cont/scv_pl_latenttime_cont_dynamical.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/cont/scv_pl_heatmap_cont_dynamical.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_1.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_2.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_3.png',
+            db=DBS, sample=SAMPLES),
+        # DAPT
+        expand('plot/{db}/dapt/scv_pl_proportions_dapt_dynamical.png',
+            db=DBS, mode=MODES),
+        expand('plot/{db}/dapt/scv_pl_velocity_embedding_stream_dapt_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/dapt/scv_pl_velocity_embedding_dapt_{mode}.png',
+            db=DBS, sample=SAMPLES, mode=MODES),
+        expand('plot/{db}/dapt/scv_pl_latenttime_dapt_dynamical.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/dapt/scv_pl_heatmap_dapt_dynamical.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_1.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_2.png',
+            db=DBS, sample=SAMPLES),
+        expand('plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_3.png',
             db=DBS, sample=SAMPLES)
 
 #################################
@@ -108,6 +149,38 @@ rule elbowplot_integrated:
         'logs/elbowplot_integrated_{db}_integrated.log'
     shell:
         'src/elbowplot_integrated.sh {input} {output} >& {log}'
+
+rule elbowplot_cont:
+    input:
+        'output/{db}/cont/seurat.RData'
+    output:
+        'plot/{db}/cont/elbowplot.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/elbowplot_cont_{db}_cont.txt'
+    log:
+        'logs/elbowplot_cont_{db}_cont.log'
+    shell:
+        'src/elbowplot_cont.sh {input} {output} >& {log}'
+
+rule elbowplot_dapt:
+    input:
+        'output/{db}/dapt/seurat.RData'
+    output:
+        'plot/{db}/dapt/elbowplot.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/elbowplot_dapt_{db}_dapt.txt'
+    log:
+        'logs/elbowplot_dapt_{db}_dapt.log'
+    shell:
+        'src/elbowplot_dapt.sh {input} {output} >& {log}'
 
 #################################
 # Barplot
@@ -165,6 +238,40 @@ rule dimplot_cluster_integrated:
         'logs/dimplot_cluster_integrated_{db}_integrated.log'
     shell:
         'src/dimplot_cluster_integrated.sh {input} {output} >& {log}'
+
+rule dimplot_cluster_cont:
+    input:
+        'output/{db}/cont/seurat.RData'
+    output:
+        'plot/{db}/cont/dimplot_cluster.png',
+        'plot/{db}/cont/dimplot_cluster_splitby.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/dimplot_cluster_cont_{db}_cont.txt'
+    log:
+        'logs/dimplot_cluster_cont_{db}_cont.log'
+    shell:
+        'src/dimplot_cluster_cont.sh {input} {output} >& {log}'
+
+rule dimplot_cluster_dapt:
+    input:
+        'output/{db}/dapt/seurat.RData'
+    output:
+        'plot/{db}/dapt/dimplot_cluster.png',
+        'plot/{db}/dapt/dimplot_cluster_splitby.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/dimplot_cluster_dapt_{db}_dapt.txt'
+    log:
+        'logs/dimplot_cluster_dapt_{db}_dapt.log'
+    shell:
+        'src/dimplot_cluster_dapt.sh {input} {output} >& {log}'
 
 #################################
 # Number of RNA counts
@@ -519,6 +626,38 @@ rule plot_cells_traectory_integrated:
     shell:
         'src/plot_cells_trajectory.sh {input} {output} >& {log}'
 
+rule plot_cells_traectory_cont:
+    input:
+        'output/{db}/cont/monocle3.RData'
+    output:
+        'plot/{db}/cont/plot_cells_trajectory.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/plot_cells_trajectory_cont_{db}_cont.txt'
+    log:
+        'logs/plot_cells_trajectory_cont_{db}_cont.log'
+    shell:
+        'src/plot_cells_trajectory.sh {input} {output} >& {log}'
+
+rule plot_cells_traectory_dapt:
+    input:
+        'output/{db}/dapt/monocle3.RData'
+    output:
+        'plot/{db}/dapt/plot_cells_trajectory.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230111'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/plot_cells_trajectory_dapt_{db}_dapt.txt'
+    log:
+        'logs/plot_cells_trajectory_dapt_{db}_dapt.log'
+    shell:
+        'src/plot_cells_trajectory.sh {input} {output} >& {log}'
+
 #################################
 # RNA Velocity
 #################################
@@ -558,6 +697,38 @@ rule scv_pl_proportions_integrated:
     shell:
         'src/scv_pl_proportions.sh {input} {output} >& {log}'
 
+rule scv_pl_proportions_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_dynamical.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_proportions_cont_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_proportions_{db}_cont_dynamical.txt'
+    log:
+        'logs/scv_pl_proportions_{db}_cont_dynamical.log'
+    shell:
+        'src/scv_pl_proportions.sh {input} {output} >& {log}'
+
+rule scv_pl_proportions_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_dynamical.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_proportions_dapt_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_proportions_{db}_dapt_dynamical.txt'
+    log:
+        'logs/scv_pl_proportions_{db}_dapt_dynamical.log'
+    shell:
+        'src/scv_pl_proportions.sh {input} {output} >& {log}'
+
 rule scv_pl_velocity_embedding_stream:
     input:
         'output/{db}/{sample}/velocyto/{sample}_{mode}.h5ad'
@@ -591,6 +762,38 @@ rule scv_pl_velocity_embedding_stream_integrated:
         'benchmarks/scv_pl_velocity_embedding_stream_{db}_integrated_{mode}.txt'
     log:
         'logs/scv_pl_velocity_embedding_stream_{db}_integrated_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_stream_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_{mode}.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_velocity_embedding_stream_cont_{mode}.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_stream_{db}_cont_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_stream_{db}_cont_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_stream_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_{mode}.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_velocity_embedding_stream_dapt_{mode}.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_stream_{db}_dapt_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_stream_{db}_dapt_{mode}.log'
     shell:
         'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
 
@@ -630,6 +833,38 @@ rule scv_pl_velocity_embedding_integrated:
     shell:
         'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
 
+rule scv_pl_velocity_embedding_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_{mode}.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_velocity_embedding_cont_{mode}.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_{db}_cont_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_{db}_cont_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_{mode}.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_velocity_embedding_dapt_{mode}.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_{db}_dapt_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_{db}_dapt_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
+
 rule scv_pl_latenttime:
     input:
         'output/{db}/{sample}/velocyto/{sample}_dynamical.h5ad'
@@ -663,6 +898,38 @@ rule scv_pl_latenttime_integrated:
         'benchmarks/scv_pl_latenttime_{db}_integrated_dynamical.txt'
     log:
         'logs/scv_pl_latenttime_{db}_integrated_dynamical.log'
+    shell:
+        'src/scv_pl_latenttime.sh {input} {output} >& {log}'
+
+rule scv_pl_latenttime_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_dynamical.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_latenttime_cont_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_latenttime_{db}_cont_dynamical.txt'
+    log:
+        'logs/scv_pl_latenttime_{db}_cont_dynamical.log'
+    shell:
+        'src/scv_pl_latenttime.sh {input} {output} >& {log}'
+
+rule scv_pl_latenttime_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_dynamical.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_latenttime_dapt_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_latenttime_{db}_dapt_dynamical.txt'
+    log:
+        'logs/scv_pl_latenttime_{db}_dapt_dynamical.log'
     shell:
         'src/scv_pl_latenttime.sh {input} {output} >& {log}'
 
@@ -702,6 +969,38 @@ rule scv_pl_heatmap_integrated:
     shell:
         'src/scv_pl_heatmap.sh {input} {output} >& {log}'
 
+rule scv_pl_heatmap_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_dynamical.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_heatmap_cont_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_heatmap_{db}_cont_dynamical.txt'
+    log:
+        'logs/scv_pl_heatmap_{db}_cont_dynamical.log'
+    shell:
+        'src/scv_pl_heatmap.sh {input} {output} >& {log}'
+
+rule scv_pl_heatmap_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_dynamical.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_heatmap_dapt_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_heatmap_{db}_dapt_dynamical.txt'
+    log:
+        'logs/scv_pl_heatmap_{db}_dapt_dynamical.log'
+    shell:
+        'src/scv_pl_heatmap.sh {input} {output} >& {log}'
+
 rule scv_pl_velocity_markers:
     input:
         'output/{db}/{sample}/velocyto/{sample}_dynamical.h5ad'
@@ -738,5 +1037,41 @@ rule scv_pl_velocity_markers_integrated:
         'benchmarks/scv_pl_velocity_markers_{db}_integrated_dynamical.txt'
     log:
         'logs/scv_pl_velocity_markers_{db}_integrated_dynamical.log'
+    shell:
+        'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_markers_cont:
+    input:
+        'output/{db}/cont/velocyto/cont_dynamical.h5ad'
+    output:
+        'plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_1.png',
+        'plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_2.png',
+        'plot/{db}/cont/scv_pl_velocity_markers_cont_dynamical_3.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_markers_{db}_cont_dynamical.txt'
+    log:
+        'logs/scv_pl_velocity_markers_{db}_cont_dynamical.log'
+    shell:
+        'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_markers_dapt:
+    input:
+        'output/{db}/dapt/velocyto/dapt_dynamical.h5ad'
+    output:
+        'plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_1.png',
+        'plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_2.png',
+        'plot/{db}/dapt/scv_pl_velocity_markers_dapt_dynamical_3.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/scv_pl_velocity_markers_{db}_dapt_dynamical.txt'
+    log:
+        'logs/scv_pl_velocity_markers_{db}_dapt_dynamical.log'
     shell:
         'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'

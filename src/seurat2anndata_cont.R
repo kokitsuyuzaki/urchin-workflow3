@@ -10,5 +10,5 @@ load(infile)
 # Conversion
 outfile2 <- gsub(".h5ad", ".h5Seurat", outfile)
 unlink(outfile2)
-SaveH5Seurat(seurat.obj, filename = outfile2)
+SaveH5Seurat(seurat.cont, filename = outfile2)
 Convert(outfile2, dest = "h5ad")

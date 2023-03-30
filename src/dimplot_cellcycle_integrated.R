@@ -55,5 +55,5 @@ dev.off()
 
 # Plot
 png(file=outfile3, width=2000, height=1000)
-DimPlot(seurat.integrated, split.by="sample", pt.size=2, label.size=6, ncol=4)
+DimPlot(seurat.integrated, split.by="sample", pt.size=2, label.size=6, ncol=5)
 dev.off()
