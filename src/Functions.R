@@ -18,9 +18,13 @@ library("purrr")
 library("tidyr")
 library("stringr")
 
-markers <- c("Hp-Hnf6", "Hp-Chordin", "Hp-Hox7", "Hp-FoxJ1", "Hp-BMP2_4", "Hp-Bra", "Hp-Delta", "Hp-SoxC", "Hp-Awh", "Hp-Gcm", "Hp-Blimp1", "Hp-Endo16", "Hp-Ephrin", "Hp-IrxA", "Hp-Hox11_13b", "Hp-FoxQ2", "Hp-MSP130", "Hp-Erg", "Hp-Ese", "Hp-FoxY", "Hp-Echn38", "Hp-Tph", "Hp-Pnlip-5", "Hp-Alx1", "Hp-Sm50")
+germlayer_colors <- c(brewer.pal(8, "Dark2")[c(2,3,1)], rgb(0,0,0, 0.5))
+names(germlayer_colors) <- c("Endoderm", "Mesoderm", "Ectoderm", "NA")
 
-sample_colors <- brewer.pal(8, "Dark2")
+# rm Hp-BMP2_4, Hp-Hox11_13b, Hp-FoxQ2, Hp-MSP130
+markers <- c("Hp-Hnf6", "Hp-Chordin", "Hp-Hox7", "Hp-FoxJ1", "Hp-Bra", "Hp-Delta", "Hp-SoxC", "Hp-Awh", "Hp-Gcm", "Hp-Blimp1", "Hp-Endo16", "Hp-Ephrin", "Hp-IrxA", "Hp-Erg", "Hp-Ese", "Hp-FoxY", "Hp-Echn38", "Hp-Tph", "Hp-Pnlip-5", "Hp-Alx1", "Hp-Sm50")
+
+sample_colors <- c(brewer.pal(9, "Set1"), "black")
 
 sample_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 

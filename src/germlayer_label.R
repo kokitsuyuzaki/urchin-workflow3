@@ -12,26 +12,21 @@ position <- which(sample_name == sample_names)
 celltype_label <- read_excel(infile2, sheet=group_names[position])
 
 # rm NA.
-celltype_label <- celltype_label[, 1:6]
+celltype_label <- celltype_label[, 1:7]
 
 # Cluster ID => Celltype name
 l <- length(table(Idents(seurat.obj)))
-cols <- c()
 for(i in seq(l)){
     clusterid <- as.character(i-1)
-    celltype <- celltype_label$celltype[i]
+    germlayer <- celltype_label$ecto_endo_meso[i]
     cmd1 <- paste0(
         "seurat.obj <- RenameIdents(seurat.obj, ",
-        "'", clusterid, "' = ", "'", celltype, "')")
-    cmd2 <- paste0(
-        "cols <- c(cols, rgb(", celltype_label$R[i],
-            ",", celltype_label$G[i],
-            ",", celltype_label$B[i], ", maxColorValue=255))")
+        "'", clusterid, "' = ", "'", germlayer, "')")
     eval(parse(text=cmd1))
-    eval(parse(text=cmd2))
 }
-names(cols) <- celltype_label$celltype[seq(l)]
-cols <- cols[unique(celltype_label$celltype[seq(l)])]
+Idents(seurat.obj) <- factor(Idents(seurat.obj),
+    levels=c("Ectoderm", "Mesoderm", "Endoderm", "NA"))
+cols <- germlayer_colors
 
 # Output
 save(seurat.obj, cols, file=outfile)
