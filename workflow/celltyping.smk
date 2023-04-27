@@ -12,6 +12,9 @@ container: 'docker://koki/urchin_workflow_seurat:20230111'
 
 rule all:
     input:
+        expand('output/hpbase/{sample}/seurat_celltype_kana.RData',
+            sample=SAMPLES),
+        'output/hpbase/integrated/seurat_celltype_kana.RData',
         expand('plot/hpbase/{sample}/dimplot_celltype.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/dimplot_celltype.png',
@@ -58,6 +61,36 @@ rule celltype_label_integrated:
         'logs/celltype_label_integrated_hpbase_integrated.log'
     shell:
         'src/celltype_label_integrated.sh {input} {output} >& {log}'
+
+rule kana:
+    input:
+        'output/hpbase/{sample}/seurat_celltype.RData'
+    output:
+        'output/hpbase/{sample}/seurat_celltype_kana.RData'
+    wildcard_constraints:
+        sample='|'.join([re.escape(x) for x in SAMPLES])
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/kana_{sample}.txt'
+    log:
+        'logs/kana_{sample}.log'
+    shell:
+        'src/kana.sh {input} {output} >& {log}'
+
+rule kana_integrated:
+    input:
+        'output/hpbase/integrated/seurat_celltype.RData'
+    output:
+        'output/hpbase/integrated/seurat_celltype_kana.RData'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/kana_integrated.txt'
+    log:
+        'logs/kana_integrated.log'
+    shell:
+        'src/kana_integrated.sh {input} {output} >& {log}'
 
 rule germlayer_label:
     input:
