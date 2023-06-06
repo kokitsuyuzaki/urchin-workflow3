@@ -12,9 +12,16 @@ container: 'docker://koki/urchin_workflow_seurat:20230111'
 
 rule all:
     input:
-        expand('output/hpbase/{sample}/seurat_celltype_kana.RData',
+        expand('output/hpbase/{sample}/kana/{sample}.rds',
             sample=SAMPLES),
-        'output/hpbase/integrated/seurat_celltype_kana.RData',
+        'output/hpbase/integrated/kana/integrated.rds',
+        'output/hpbase/cont/kana/cont.rds',
+        'output/hpbase/DAPT/kana/DAPT.rds',
+        'output/hpbase/24h/kana/24h.rds',
+        'output/hpbase/36h/kana/36h.rds',
+        'output/hpbase/36h/kana/48h.rds',
+        'output/hpbase/36h/kana/72h.rds',
+        'output/hpbase/36h/kana/96h.rds',
         expand('plot/hpbase/{sample}/dimplot_celltype.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/dimplot_celltype.png',
@@ -24,8 +31,11 @@ rule all:
         'plot/hpbase/integrated/dimplot_celltype_splitby.png',
         expand('plot/hpbase/{sample}/dotplot_celltype.png',
             sample=SAMPLES),
-        'plot/hpbase/integrated/dotplot_celltype.png',
-        'plot/hpbase/integrated/dotplot_celltype_splitby.png'
+        'plot/hpbase/integrated/heatmap_celltype_cont.png',
+        'plot/hpbase/integrated/heatmap_celltype_dapt.png',
+        'plot/hpbase/integrated/heatmap_celltype_ratio.png',
+        'plot/hpbase/integrated/heatmap_celltype_t_pval.png',
+        'plot/hpbase/integrated/heatmap_celltype_wilcox_pval.png'
 
 #################################
 # Celltype Label
@@ -62,11 +72,11 @@ rule celltype_label_integrated:
     shell:
         'src/celltype_label_integrated.sh {input} {output} >& {log}'
 
-rule kana:
+rule kana_sample:
     input:
         'output/hpbase/{sample}/seurat_celltype.RData'
     output:
-        'output/hpbase/{sample}/seurat_celltype_kana.RData'
+        'output/hpbase/{sample}/kana/{sample}.rds'
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
@@ -82,7 +92,7 @@ rule kana_integrated:
     input:
         'output/hpbase/integrated/seurat_celltype.RData'
     output:
-        'output/hpbase/integrated/seurat_celltype_kana.RData'
+        'output/hpbase/integrated/kana/integrated.rds'
     resources:
         mem_gb=1000
     benchmark:
@@ -92,6 +102,38 @@ rule kana_integrated:
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
+rule kana_experiment:
+    input:
+        'output/hpbase/integrated/kana/integrated.rds'
+    output:
+        'output/hpbase/cont/kana/cont.rds',
+        'output/hpbase/DAPT/kana/DAPT.rds'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/kana_experiment.txt'
+    log:
+        'logs/kana_experiment.log'
+    shell:
+        'src/kana_experiment.sh {input} {output} >& {log}'
+
+rule kana_time:
+    input:
+        'output/hpbase/integrated/kana/integrated.rds'
+    output:
+        'output/hpbase/24h/kana/24h.rds',
+        'output/hpbase/36h/kana/36h.rds',
+        'output/hpbase/36h/kana/48h.rds',
+        'output/hpbase/36h/kana/72h.rds',
+        'output/hpbase/36h/kana/96h.rds'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/kana_time.txt'
+    log:
+        'logs/kana_time.log'
+    shell:
+        'src/kana_time.sh {input} {output} >& {log}'
 rule germlayer_label:
     input:
         'output/hpbase/{sample}/seurat.RData',
@@ -222,3 +264,21 @@ rule dotplot_celltype_integrated:
         'logs/dotplot_celltype_integrated_hpbase_integrated.log'
     shell:
         'src/dotplot_celltype_integrated.sh {input} {output} >& {log}'
+
+rule heatmap_celltype_integrated:
+    input:
+        'output/hpbase/integrated/seurat_celltype.RData'
+    output:
+        'plot/hpbase/integrated/heatmap_celltype_cont.png',
+        'plot/hpbase/integrated/heatmap_celltype_dapt.png',
+        'plot/hpbase/integrated/heatmap_celltype_ratio.png',
+        'plot/hpbase/integrated/heatmap_celltype_t_pval.png',
+        'plot/hpbase/integrated/heatmap_celltype_wilcox_pval.png'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/heatmap_celltype_integrated_hpbase_integrated.txt'
+    log:
+        'logs/heatmap_celltype_integrated_hpbase_integrated.log'
+    shell:
+        'src/heatmap_celltype_integrated.sh {input} {output} >& {log}'

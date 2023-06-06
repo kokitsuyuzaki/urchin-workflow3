@@ -13,4 +13,4 @@ counts(sce) <- NULL
 altExp(sce) <- NULL
 
 # Save
-save(sce, file=outfile)
+saveRDS(sce, file=outfile)
