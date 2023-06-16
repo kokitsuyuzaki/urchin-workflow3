@@ -11,3 +11,4 @@ snakemake -s workflow/velocity.smk --report report/velocity.html
 snakemake -s workflow/plot.smk --report report/plot.html
 snakemake -s workflow/report.smk --report report/report.html
 snakemake -s workflow/celltyping.smk --report report/celltyping.html
+snakemake -s workflow/template_matching.smk --report report/template_matching.html

@@ -9,7 +9,7 @@ min_version("6.5.3")
 SAMPLES = ['cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h']
 DBS = ['hpbase', 'echinobase']
 
-container: 'docker://koki/urchin_workflow_seurat:20230111'
+container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
