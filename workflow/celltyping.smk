@@ -134,6 +134,7 @@ rule kana_time:
         'logs/kana_time.log'
     shell:
         'src/kana_time.sh {input} {output} >& {log}'
+
 rule germlayer_label:
     input:
         'output/hpbase/{sample}/seurat.RData',
