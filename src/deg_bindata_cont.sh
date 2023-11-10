@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/preprocess_sbmfcv_integrated.R $@
+Rscript src/deg_bindata_cont.R $@

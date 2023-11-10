@@ -10,12 +10,14 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-outdir=`echo $2 | sed -e 's|/plot/Allstates.png||'`
+outdir=`echo $4 | sed -e 's|/plot/ratio_group.png||'`
 
-mkdir -p tmp2
-cd tmp2
+mkdir -p tmp4
+cd tmp4
 cp /landscaper .
 cp /Snakefile .
 cp -rf /src .
 
-./landscaper -i ../$1 -o ../$outdir --cores=4 --memgb=10
+./landscaper -i ../$1 -o ../$outdir -g ../$2 -d ../$3 --cores=4 --memgb=10
+
+rm -rf tmp4

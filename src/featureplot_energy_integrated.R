@@ -10,6 +10,9 @@ bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DA
 energy_integrated <- unlist(read.table('plot/hpbase/integrated/Landscaper/E.tsv', header=FALSE))
 load('output/hpbase/integrated/seurat.RData')
 
+# rm \t
+bin_data_integrated <- gsub("\t", " ", bin_data_integrated)
+
 # Sort
 names(all_states_integrated) <- NULL
 names(bin_data_integrated) <- NULL

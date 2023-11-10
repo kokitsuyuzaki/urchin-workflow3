@@ -7,11 +7,8 @@ outfile <- commandArgs(trailingOnly=TRUE)[2]
 # Loading
 load(infile)
 
-# Setting for kana
-sce <- as.SingleCellExperiment(seurat.integrated)
-counts(sce) <- NULL
-altExp(sce) <- NULL
-altExp(sce) <- NULL
+# Extract Group Name
+group <- as.character(Idents(seurat.cont))
 
 # Save
-saveRDS(sce, file=outfile)
+write.table(group, outfile, row.names=FALSE, col.names=FALSE, quote=FALSE)

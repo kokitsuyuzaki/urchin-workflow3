@@ -12,6 +12,8 @@ container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
+        'output/hpbase/cont/seurat_celltype.RData',
+        'output/hpbase/dapt/seurat_celltype.RData',
         expand('output/hpbase/{sample}/kana/{sample}.rds',
             sample=SAMPLES),
         'output/hpbase/integrated/kana/integrated.rds',
@@ -71,6 +73,21 @@ rule celltype_label_integrated:
         'logs/celltype_label_integrated_hpbase_integrated.log'
     shell:
         'src/celltype_label_integrated.sh {input} {output} >& {log}'
+
+rule celltype_label_stratification:
+    input:
+        'output/hpbase/integrated/seurat_celltype.RData'
+    output:
+        'output/hpbase/cont/seurat_celltype.RData',
+        'output/hpbase/dapt/seurat_celltype.RData'
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/celltype_label_stratification.txt'
+    log:
+        'logs/celltype_label_stratification.log'
+    shell:
+        'src/celltype_label_stratification.sh {input} {output} >& {log}'
 
 rule kana_sample:
     input:

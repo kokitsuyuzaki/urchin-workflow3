@@ -13,6 +13,9 @@ load('output/hpbase/integrated/seurat.RData')
 names(all_states_integrated) <- NULL
 names(bin_data_integrated) <- NULL
 
+# rm \t
+bin_data_integrated <- gsub("\t", " ", bin_data_integrated)
+
 # 各データごとの状態No
 target_integrated <- sapply(bin_data_integrated, function(x){
      which(all_states_integrated == x)

@@ -19,6 +19,8 @@ cp /Snakefile .
 cp -rf /src .
 
 ./sbmfcv -i ../$1 -o ../$outdir \
---cores=4 --rank_min=1 --rank_max=10 \
---lambda_min=-5 --lambda_max=5 --trials=5 \
---n_iter_max=100 --ratio=20 --memgb=10
+--cores=8 --rank_min=2 --rank_max=15 \
+--lambda_min=-3 --lambda_max=3 --trials=5 \
+--n_iter_max=50 --ratio=20 --memgb=50
+
+rm -rf tmp
