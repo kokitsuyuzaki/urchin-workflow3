@@ -18,6 +18,7 @@ library("purrr")
 library("tidyr")
 library("stringr")
 library("ggplot2")
+library("viridis")
 library("reshape2")
 library("qvalue")
 

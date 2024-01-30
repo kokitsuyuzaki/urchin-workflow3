@@ -10,7 +10,7 @@ SAMPLES = ['cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h
 DBS = ['hpbase', 'echinobase']
 GOS = ['bp', 'mf', 'cc']
 
-container: 'docker://koki/urchin_workflow_seurat:20230111'
+container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:

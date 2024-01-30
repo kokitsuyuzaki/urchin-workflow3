@@ -10,6 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-wget -P data/echinobase/ "http://ftp.echinobase.org/pub/Genomics/Spur5.0/"$1".gz" --no-check-certificate
-cd data/echinobase
-gunzip $1".gz"
+Rscript src/kana_sample_stratification.R $@

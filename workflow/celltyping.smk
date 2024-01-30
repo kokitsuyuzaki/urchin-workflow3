@@ -17,13 +17,15 @@ rule all:
         expand('output/hpbase/{sample}/kana/{sample}.rds',
             sample=SAMPLES),
         'output/hpbase/integrated/kana/integrated.rds',
+        expand('output/hpbase/{sample}/kana/stratification/{sample}.rds',
+            sample=SAMPLES),
         'output/hpbase/cont/kana/cont.rds',
         'output/hpbase/DAPT/kana/DAPT.rds',
         'output/hpbase/24h/kana/24h.rds',
         'output/hpbase/36h/kana/36h.rds',
-        'output/hpbase/36h/kana/48h.rds',
-        'output/hpbase/36h/kana/72h.rds',
-        'output/hpbase/36h/kana/96h.rds',
+        'output/hpbase/48h/kana/48h.rds',
+        'output/hpbase/72h/kana/72h.rds',
+        'output/hpbase/96h/kana/96h.rds',
         expand('plot/hpbase/{sample}/dimplot_celltype.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/dimplot_celltype.png',
@@ -119,6 +121,22 @@ rule kana_integrated:
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
+rule kana_sample_stratification:
+    input:
+        'output/hpbase/integrated/kana/integrated.rds'
+    output:
+        'output/hpbase/{sample}/kana/stratification/{sample}.rds'
+    wildcard_constraints:
+        sample='|'.join([re.escape(x) for x in SAMPLES])
+    resources:
+        mem_gb=1000
+    benchmark:
+        'benchmarks/kana_sample_stratification_{sample}.txt'
+    log:
+        'logs/kana_sample_stratification_{sample}.log'
+    shell:
+        'src/kana_sample_stratification.sh {input} {output} {wildcards.sample} >& {log}'
+
 rule kana_experiment:
     input:
         'output/hpbase/integrated/kana/integrated.rds'
@@ -140,9 +158,9 @@ rule kana_time:
     output:
         'output/hpbase/24h/kana/24h.rds',
         'output/hpbase/36h/kana/36h.rds',
-        'output/hpbase/36h/kana/48h.rds',
-        'output/hpbase/36h/kana/72h.rds',
-        'output/hpbase/36h/kana/96h.rds'
+        'output/hpbase/48h/kana/48h.rds',
+        'output/hpbase/72h/kana/72h.rds',
+        'output/hpbase/96h/kana/96h.rds'
     resources:
         mem_gb=1000
     benchmark:
