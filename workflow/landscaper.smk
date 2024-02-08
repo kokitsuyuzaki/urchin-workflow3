@@ -6,7 +6,7 @@ from snakemake.utils import min_version
 #################################
 min_version("6.5.3")
 
-SAMPLES = ["integrated", "cont", "dapt"]
+SAMPLES = ["integrated", "cont", "DAPT"]
 PLOTFILES = ['ratio_group.png', 'Allstates.png', 'Freq_Prob_Energy.png', 'h.png', 'J.png', 'Basin.png', 'StatusNetwork_Subgraph.png', 'StatusNetwork_Subgraph_legend.png', 'StatusNetwork_Energy.png', 'StatusNetwork_Energy_legend.png', 'StatusNetwork_Ratio.png', 'StatusNetwork_Ratio_legend.png', 'StatusNetwork_State.png', 'StatusNetwork_State_legend.png', 'Landscape.png', 'discon_graph_1.png', 'discon_graph_2.png']
 
 rule all:
@@ -71,7 +71,7 @@ rule stratify:
         'output/hpbase/integrated/sbmfcv/BIN_DATA.tsv'
     output:
         'output/hpbase/cont/sbmfcv/BIN_DATA.tsv',
-        'output/hpbase/dapt/sbmfcv/BIN_DATA.tsv'
+        'output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv'
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
@@ -119,7 +119,7 @@ rule featureplot_deg_bindata:
 
 rule group:
     input:
-        'output/hpbase/{sample}/seurat_celltype.RData'
+        'output/hpbase/{sample}/seurat_annotated.RData'
     output:
         'output/hpbase/{sample}/group.tsv'
     container:
@@ -201,44 +201,44 @@ rule landscaper_cont:
     shell:
         'src/landscaper_cont.sh {input} {output} >& {log}'
 
-rule landscaper_dapt:
+rule landscaper_DAPT:
     input:
-        'output/hpbase/dapt/sbmfcv/BIN_DATA.tsv',
-        'output/hpbase/dapt/group.tsv',
+        'output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv',
+        'output/hpbase/DAPT/group.tsv',
         'plot/hpbase/integrated/Landscaper/Coordinate.tsv'
     output:
-        'plot/hpbase/dapt/Landscaper/plot/ratio_group.png',
-        'plot/hpbase/dapt/Landscaper/plot/Allstates.png',
-        'plot/hpbase/dapt/Landscaper/plot/Freq_Prob_Energy.png',
-        'plot/hpbase/dapt/Landscaper/plot/h.png',
-        'plot/hpbase/dapt/Landscaper/plot/J.png',
-        'plot/hpbase/dapt/Landscaper/plot/Basin.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Subgraph.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Subgraph_legend.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Energy.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Energy_legend.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Ratio.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_Ratio_legend.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_State.png',
-        'plot/hpbase/dapt/Landscaper/plot/StatusNetwork_State_legend.png',
-        'plot/hpbase/dapt/Landscaper/plot/Landscape.png',
-        'plot/hpbase/dapt/Landscaper/plot/discon_graph_1.png',
-        'plot/hpbase/dapt/Landscaper/plot/discon_graph_2.png'
+        'plot/hpbase/DAPT/Landscaper/plot/ratio_group.png',
+        'plot/hpbase/DAPT/Landscaper/plot/Allstates.png',
+        'plot/hpbase/DAPT/Landscaper/plot/Freq_Prob_Energy.png',
+        'plot/hpbase/DAPT/Landscaper/plot/h.png',
+        'plot/hpbase/DAPT/Landscaper/plot/J.png',
+        'plot/hpbase/DAPT/Landscaper/plot/Basin.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Subgraph.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Subgraph_legend.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Energy.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Energy_legend.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Ratio.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_Ratio_legend.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_State.png',
+        'plot/hpbase/DAPT/Landscaper/plot/StatusNetwork_State_legend.png',
+        'plot/hpbase/DAPT/Landscaper/plot/Landscape.png',
+        'plot/hpbase/DAPT/Landscaper/plot/discon_graph_1.png',
+        'plot/hpbase/DAPT/Landscaper/plot/discon_graph_2.png'
     container:
         'docker://ghcr.io/chiba-ai-med/landscaper:main'
     resources:
         mem_gb=500
     benchmark:
-        'benchmarks/landscaper_dapt.txt'
+        'benchmarks/landscaper_DAPT.txt'
     log:
-        'logs/landscaper_dapt.log'
+        'logs/landscaper_DAPT.log'
     shell:
-        'src/landscaper_dapt.sh {input} {output} >& {log}'
+        'src/landscaper_DAPT.sh {input} {output} >& {log}'
 
 rule plot_h:
     input:
         'plot/hpbase/cont/Landscaper/plot/h.png',
-        'plot/hpbase/dapt/Landscaper/plot/h.png'
+        'plot/hpbase/DAPT/Landscaper/plot/h.png'
     output:
         'plot/hpbase/integrated/h.png'
     container:
@@ -255,7 +255,7 @@ rule plot_h:
 rule plot_J:
     input:
         'plot/hpbase/cont/Landscaper/plot/J.png',
-        'plot/hpbase/dapt/Landscaper/plot/J.png'
+        'plot/hpbase/DAPT/Landscaper/plot/J.png'
     output:
         'plot/hpbase/integrated/J.png'
     container:

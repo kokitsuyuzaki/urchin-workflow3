@@ -1,20 +1,15 @@
 source("src/Functions.R")
 
 # Parameter
-db <- commandArgs(trailingOnly=TRUE)[1]
-infile1 <- commandArgs(trailingOnly=TRUE)[2]
-infile2 <- commandArgs(trailingOnly=TRUE)[3]
-outfile <- commandArgs(trailingOnly=TRUE)[4]
+infile1 <- commandArgs(trailingOnly=TRUE)[1]
+infile2 <- commandArgs(trailingOnly=TRUE)[2]
+outfile <- commandArgs(trailingOnly=TRUE)[3]
 
 # Loading
 load(infile1)
 load(infile2)
 
-if(db == "hpbase"){
-    marker <- marker$GENENAME_Hp
-}else{
-    marker <- marker$GENENAME_Sp
-}
+marker <- marker$GENENAME_Hp
 marker <- intersect(marker, rownames(seurat.integrated))
 
 seuratList <- .stratifySeurat(seurat.integrated, group_names)

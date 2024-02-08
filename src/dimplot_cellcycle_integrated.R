@@ -1,43 +1,28 @@
 source("src/Functions.R")
 
 # Parameter
-db <- commandArgs(trailingOnly=TRUE)[1]
-infile1 <- commandArgs(trailingOnly=TRUE)[2]
-infile2 <- commandArgs(trailingOnly=TRUE)[3]
-outfile1 <- commandArgs(trailingOnly=TRUE)[4]
-outfile2 <- commandArgs(trailingOnly=TRUE)[5]
-outfile3 <- commandArgs(trailingOnly=TRUE)[6]
+infile1 <- commandArgs(trailingOnly=TRUE)[1]
+infile2 <- commandArgs(trailingOnly=TRUE)[2]
+outfile1 <- commandArgs(trailingOnly=TRUE)[3]
+outfile2 <- commandArgs(trailingOnly=TRUE)[4]
+outfile3 <- commandArgs(trailingOnly=TRUE)[5]
 
 # Loading
 load(infile1)
 load(infile2)
 
 # Cell cycle-related Genes
-if(db == "hpbase"){
-    s.genes <- intersect(
-        rownames(seurat.integrated),
-        unlist(lapply(cc.genes$s.genes, function(x){
-            annotation$HPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
-        })))
-    g2m.genes <- intersect(
-        rownames(seurat.integrated),
-        unlist(lapply(cc.genes$g2m.genes, function(x){
-            annotation$HPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
-        })))
-    genes_ridgeplot <- genes_ridgeplot_hpbase
-}else{
-    s.genes <- intersect(
-        rownames(seurat.integrated),
-        unlist(lapply(cc.genes$s.genes, function(x){
-            annotation$SPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
-        })))
-    g2m.genes <- intersect(
-        rownames(seurat.integrated),
-        unlist(lapply(cc.genes$g2m.genes, function(x){
-            annotation$SPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
-        })))
-    genes_ridgeplot <- genes_ridgeplot_echinobase
-}
+s.genes <- intersect(
+    rownames(seurat.integrated),
+    unlist(lapply(cc.genes$s.genes, function(x){
+        annotation$HPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
+    })))
+g2m.genes <- intersect(
+    rownames(seurat.integrated),
+    unlist(lapply(cc.genes$g2m.genes, function(x){
+        annotation$HPU_gene_name[grep(x, annotation$Uniprot_gene_name)]
+    })))
+genes_ridgeplot <- genes_ridgeplot_hpbase
 
 # Cellcycle Scoring
 seurat.integrated <- CellCycleScoring(seurat.integrated,

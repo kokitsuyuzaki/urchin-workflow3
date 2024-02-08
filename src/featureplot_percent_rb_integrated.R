@@ -1,24 +1,18 @@
 source("src/Functions.R")
 
 # Parameter
-db <- commandArgs(trailingOnly=TRUE)[1]
-infile1 <- commandArgs(trailingOnly=TRUE)[2]
-infile2 <- commandArgs(trailingOnly=TRUE)[3]
-outfile1 <- commandArgs(trailingOnly=TRUE)[4]
-outfile2 <- commandArgs(trailingOnly=TRUE)[5]
+infile1 <- commandArgs(trailingOnly=TRUE)[1]
+infile2 <- commandArgs(trailingOnly=TRUE)[2]
+outfile1 <- commandArgs(trailingOnly=TRUE)[3]
+outfile2 <- commandArgs(trailingOnly=TRUE)[4]
 
 # Loading
 load(infile1)
 load(infile2)
 
 # Extract Ribosome Genes
-if(db == "hpbase"){
-    target.genes <- intersect(rownames(seurat.integrated),
-        annotation$HPU_gene_name[grep("ribosome", annotation$NR_genename)])
-}else{
 target.genes <- intersect(rownames(seurat.integrated),
-    annotation$SPU_gene_name[grep("ribosome", annotation$NR_genename)])
-}
+    annotation$HPU_gene_name[grep("ribosome", annotation$NR_genename)])
 
 # Calculate the Percentage
 percent.rb <- colSums(seurat.integrated[target.genes, ]) / colSums(seurat.integrated) * 100

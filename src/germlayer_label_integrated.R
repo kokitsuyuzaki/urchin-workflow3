@@ -7,17 +7,17 @@ outfile <- commandArgs(trailingOnly=TRUE)[3]
 
 # Loading
 load(infile1)
-celltype_label <- read_excel(infile2, sheet=1)
+xlsx_sheet <- read_excel(infile2, sheet=1)
 
 # rm NA.
-celltype_label <- celltype_label[, 1:7]
+xlsx_sheet <- xlsx_sheet[, 1:7]
 
 # Cluster ID => Celltype name
 l <- length(table(Idents(seurat.integrated)))
 cols <- c()
 for(i in seq(l)){
     clusterid <- as.character(i-1)
-    germlayer <- celltype_label$ecto_endo_meso[i]
+    germlayer <- xlsx_sheet$ecto_endo_meso[i]
     cmd1 <- paste0(
         "seurat.integrated <- RenameIdents(seurat.integrated, ",
         "'", clusterid, "' = ", "'", germlayer, "')")
@@ -28,4 +28,4 @@ Idents(seurat.integrated) <- factor(Idents(seurat.integrated),
 cols <- germlayer_colors
 
 # Save
-save(seurat.integrated, cols, file=outfile)
+save(seurat.integrated, file=outfile)

@@ -28,16 +28,16 @@ target_cont2 <- unlist(sapply(basin_cont, function(x){
 basin_cont_sorted[target_cont2] <- 1
 
 # Assign Labels
-seurat.cont$basin <- basin_cont_sorted
+seurat.integrated$basin <- basin_cont_sorted
 
 # Plot
-g <- DimPlot(seurat.cont, reduction = "umap", group.by="basin", label=FALSE, pt.size=2, label.size=6, cols=c(8,3)) + NoLegend()
+g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", label=FALSE, pt.size=2, label.size=6, cols=c(8,3)) + NoLegend()
 png(file=outfile1, width=600, height=600)
 print(g)
 dev.off()
 
 # Plot
-g <- DimPlot(seurat.cont, reduction = "umap", group.by="basin", split.by="sample", label=FALSE, pt.size=2, label.size=6, cols=c(8,3)) + NoLegend()
+g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", split.by="sample", label=FALSE, pt.size=2, label.size=6, cols=c(8,3)) + NoLegend()
 png(file=outfile2, width=2400, height=600)
 print(g)
 dev.off()

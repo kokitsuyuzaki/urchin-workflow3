@@ -2,10 +2,18 @@ source("src/Functions.R")
 
 # Parameter
 set.seed(1234)
-outfile <- commandArgs(trailingOnly=TRUE)[1]
-infiles <- paste0("output/hpbase/",
-    c("cont-24h", "cont-36h", "cont-48h", "cont-72h", "cont-96h",
-        "DAPT-24h", "DAPT-36h", "DAPT-48h", "DAPT-72h", "DAPT-96h"), "/seurat.RData")
+condition <- commandArgs(trailingOnly=TRUE)[1]
+outfile <- commandArgs(trailingOnly=TRUE)[2]
+
+if(condition == "cont"){
+    infiles <- paste0("output/hpbase/",
+        c("cont-24h", "cont-36h", "cont-48h", "cont-72h", "cont-96h"),
+        "/seurat.RData")
+}else{
+    infiles <- paste0("output/hpbase/",
+        c("DAPT-24h", "DAPT-36h", "DAPT-48h", "DAPT-72h", "DAPT-96h"),
+        "/seurat.RData")
+}
 
 # Loading
 seurat.list <- lapply(infiles, function(x){

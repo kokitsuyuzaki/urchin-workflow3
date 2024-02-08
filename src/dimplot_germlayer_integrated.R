@@ -9,16 +9,16 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[3]
 load(infile)
 
 # 色
-cols <- sapply(names(table(seurat.integrated$celltype)), function(x){
-    target <- which(seurat.integrated$celltype == x)[1]
-    tmp <- seurat.integrated$celltype_colors[target]
-    names(tmp) <- seurat.integrated$celltype[x]
+cols <- sapply(names(table(seurat.integrated$germlayer)), function(x){
+    target <- which(seurat.integrated$germlayer == x)[1]
+    tmp <- seurat.integrated$germlayer_colors[target]
+    names(tmp) <- seurat.integrated$germlayer[x]
     tmp
 })
 names(cols) <- gsub("\\.NA", "", names(cols))
 
 # Idents切り替え
-Idents(seurat.integrated) <- factor(seurat.integrated$celltype, levels=names(cols))
+Idents(seurat.integrated) <- factor(seurat.integrated$germlayer, levels=names(cols))
 
 # Plot
 png(file=outfile1, width=1200, height=600)

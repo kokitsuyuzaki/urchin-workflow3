@@ -10,17 +10,12 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-if [ $1 = "hpbase" ]; then
-	SAMPLE="output/hpbase/"$2
-	GTF="data/hpbase/HpulGenome_v1_geneid.gtf"
-else
-	SAMPLE="output/echinobase/"$2
-	GTF="data/echinobase/sp5_0_GCF_geneid.gtf"
-fi
+SAMPLE="output/hpbase/"$1
+GTF="data/hpbase/HpulGenome_v1_geneid.gtf"
 
 samtools --version
-INFILE="output/"$1"/"$2"/outs/possorted_genome_bam.bam"
-OUTFILE="output/"$1"/"$2"/outs/cellsorted_possorted_genome_bam.bam"
+INFILE="output/hpbase/"$1"/outs/possorted_genome_bam.bam"
+OUTFILE="output/hpbase/"$1"/outs/cellsorted_possorted_genome_bam.bam"
 if [ ! -e $OUTFILE ]; then
 	samtools sort -t CB -O BAM -o $OUTFILE $INFILE
 fi

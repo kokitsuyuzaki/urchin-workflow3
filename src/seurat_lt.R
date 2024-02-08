@@ -2,10 +2,9 @@ source("src/Functions.R")
 
 # Parameter
 set.seed(1234)
-db <- commandArgs(trailingOnly=TRUE)[1]
-sample <- commandArgs(trailingOnly=TRUE)[2]
-outfile <- commandArgs(trailingOnly=TRUE)[3]
-indir <- paste0("output/", db, "/", sample, "/outs/filtered_feature_bc_matrix")
+sample <- commandArgs(trailingOnly=TRUE)[1]
+outfile <- commandArgs(trailingOnly=TRUE)[2]
+indir <- paste0("output/echinobase/", sample, "/outs/filtered_feature_bc_matrix")
 
 # Loading
 data <- Read10X(data.dir=indir)

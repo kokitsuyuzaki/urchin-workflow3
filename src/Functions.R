@@ -22,6 +22,12 @@ library("viridis")
 library("reshape2")
 library("qvalue")
 
+# Label Stratification
+.labelStratify <- function(seurat.integrated, target.pattern){
+    target <- grep(target.pattern, seurat.integrated@meta.data$sample)
+    seurat.integrated[, target]
+}
+
 germlayer_colors <- c(brewer.pal(8, "Dark2")[c(2,3,1)], rgb(0,0,0, 0.5))
 names(germlayer_colors) <- c("Endoderm", "Mesoderm", "Ectoderm", "NA")
 

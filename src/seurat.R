@@ -2,25 +2,19 @@ source("src/Functions.R")
 
 # Parameter
 set.seed(1234)
-db <- commandArgs(trailingOnly=TRUE)[1]
-sample <- commandArgs(trailingOnly=TRUE)[2]
-outfile <- commandArgs(trailingOnly=TRUE)[3]
-indir <- paste0("output/", db, "/", sample, "/outs/filtered_feature_bc_matrix")
+sample <- commandArgs(trailingOnly=TRUE)[1]
+outfile <- commandArgs(trailingOnly=TRUE)[2]
+indir <- paste0("output/hpbase/", sample, "/outs/filtered_feature_bc_matrix")
 
 # Loading
 geneid_to_genename <- read.csv('data/geneid_to_genename.csv', row.names=1)
 data <- Read10X(data.dir=indir)
 
 # Gene ID => Gene Name
-if(db == "hpbase"){
-    index <- 1:2
-}else{
-    index <- 4:3
-}
 tmp <- convertRowID(
     input = as.matrix(data),
     rowID = rownames(data),
-    LtoR = geneid_to_genename[, index])
+    LtoR = geneid_to_genename[, 1:2])
 data <- as(tmp$output, "sparseMatrix")
 
 # ここで、"_"を"-"に勝手に変換するSeuratの仕様と組み合わさって、Featureが重複してコケる

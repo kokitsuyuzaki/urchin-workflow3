@@ -21,16 +21,16 @@ target_cont <- sapply(bin_data_cont, function(x){
 energy_cont_sorted <- energy_cont[target_cont]
 
 # Assign Labels
-seurat.cont$energy <- energy_cont_sorted
+seurat.integrated$energy <- energy_cont_sorted
 
 # Plot
-g <- FeaturePlot(seurat.cont, reduction = "umap", features="energy", pt.size=2)
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2)
 png(file=outfile1, width=600, height=600)
 print(g)
 dev.off()
 
 # Plot
-g <- FeaturePlot(seurat.cont, reduction = "umap", features="energy", split.by="sample", ncol=5, pt.size=2)
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", split.by="sample", ncol=5, pt.size=2)
 png(file=outfile2, width=3000, height=600)
 print(g)
 dev.off()
