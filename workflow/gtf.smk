@@ -19,7 +19,7 @@ rule trim_gff_hpbase:
     output:
         'data/hpbase/trim.HpulGenome_v1.gff3'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/trim_gff_hpbase.txt'
     log:
@@ -37,7 +37,7 @@ rule gff_to_gtf:
         'data/hpbase/HpulGenome_v1.gtf',
         'data/echinobase/sp5_0_GCF.gtf'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/gff_to_gtf.txt'
     log:
@@ -53,7 +53,7 @@ rule trim_gtf:
         'data/hpbase/trim.HpulGenome_v1.gtf',
         'data/echinobase/trim.sp5_0_GCF.gtf'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/trim_gtf.txt'
     log:

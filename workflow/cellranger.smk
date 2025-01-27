@@ -26,7 +26,7 @@ rule cellranger_mkref_hpbase:
     output:
         'data/hpbase/HpulGenome_v1/star/SA'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/cellranger_mkref_hpbase.txt'
     log:
@@ -41,7 +41,7 @@ rule cellranger_mkref_echinobase:
     output:
         'data/echinobase/sp5_0/star/SA'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/cellranger_mkref_echinobase.txt'
     log:
@@ -59,7 +59,7 @@ rule cellranger_count_hpbase:
     output:
         'output/hpbase/{sample}/outs/web_summary.html'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/cellranger_count_hpbase_{sample}.txt'
     log:
@@ -74,7 +74,7 @@ rule cellranger_count_echinobase:
     output:
         'output/echinobase/{sample}/outs/web_summary.html'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/cellranger_count_echinobase_{sample}.txt'
     log:

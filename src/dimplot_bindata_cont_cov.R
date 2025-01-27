@@ -14,12 +14,12 @@ for(i in seq_len(ncol(bindata_cont))){
 }
 
 # Setting
-dir.create("plot/hpbase/cont/bindata/")
+dir.create("plot/hpbase/cont_cov/bindata/")
 
 # Plot cont
 for(i in seq_len(ncol(bindata_cont))){
-     filename1 <- paste0("plot/hpbase/cont/bindata/", i, ".png")
-     filename2 <- paste0("plot/hpbase/cont/bindata/", i, "_splitby.png")
+     filename1 <- paste0("plot/hpbase/cont_cov/bindata/", i, ".png")
+     filename2 <- paste0("plot/hpbase/cont_cov/bindata/", i, "_splitby.png")
      groupname <- paste0("bindata_", i)
      # Plot
      g <- DimPlot(seurat.integrated, reduction = "umap", group.by=groupname, label=TRUE, pt.size=2, label.size=6, cols=c(4,2)) + NoLegend()

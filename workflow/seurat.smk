@@ -39,7 +39,7 @@ rule seurat:
     output:
         'output/hpbase/{sample}/seurat.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat_{sample}.txt'
     log:
@@ -56,7 +56,7 @@ rule seurat_condition:
     output:
         'output/hpbase/{condition}/seurat.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     wildcard_constraints:
         condition='|'.join([re.escape(x) for x in CONDITIONS])
     benchmark:
@@ -72,7 +72,7 @@ rule seurat_time:
     output:
         'output/hpbase/{time}/seurat.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     wildcard_constraints:
         time='|'.join([re.escape(x) for x in TIMES])
     benchmark:
@@ -88,7 +88,7 @@ rule seurat_integration:
     output:
         'output/hpbase/integrated/seurat.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat_integration.txt'
     log:
@@ -103,7 +103,7 @@ rule seurat_for_labeltransfer:
     output:
         'output/echinobase/{sample}/seurat_lt.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat_echinobase_{sample}.txt'
     log:
@@ -117,7 +117,7 @@ rule seurat_findconservedmarkers_integrated:
     output:
         'output/hpbase/integrated/markers.xlsx'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat_findconservedmarkers_integrated_integrated.txt'
     log:
@@ -140,7 +140,7 @@ rule seurat_stratification:
         'output/hpbase/72h_stratified/seurat.RData',
         'output/hpbase/96h_stratified/seurat.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat_integrated.txt'
     log:

@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/deg_bindata_cont.R $@
+Rscript src/dimplot_bindata_cont_cov.R $@

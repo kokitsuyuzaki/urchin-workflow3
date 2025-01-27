@@ -31,7 +31,7 @@ rule stratify_wo_2496h:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/stratify_wo_2496h_wo_2496h.txt'
     log:

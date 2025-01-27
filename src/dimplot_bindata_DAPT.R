@@ -5,7 +5,7 @@ outfile <- commandArgs(trailingOnly=TRUE)[1]
 
 # Loading
 bindata_DAPT <- read.table('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE)
-load('output/hpbase/DAPT/seurat.RData')
+load('output/hpbase/DAPT_stratified/seurat.RData')
 
 # Assign Labels
 for(i in seq_len(ncol(bindata_DAPT))){

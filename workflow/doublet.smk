@@ -22,7 +22,7 @@ rule scdblfinder_integrated:
     output:
         'output/hpbase/integrated/scdblfinder.RData'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/scdblfinder_integrated.txt'
     log:

@@ -26,7 +26,7 @@ rule monocle3_integrated:
     output:
         'output/hpbase/integrated/monocle3.RData'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/monocle3_integrated.txt'
     log:
@@ -40,7 +40,7 @@ rule monocle3_cont:
     output:
         'output/hpbase/cont/monocle3.RData'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/monocle3_cont.txt'
     log:
@@ -54,7 +54,7 @@ rule monocle3_DAPT:
     output:
         'output/hpbase/DAPT/monocle3.RData'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/monocle3_DAPT.txt'
     log:

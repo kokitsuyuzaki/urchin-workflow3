@@ -77,7 +77,7 @@ rule elbowplot_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/elbowplot_integrated_integrated.txt'
     log:
@@ -93,7 +93,7 @@ rule elbowplot_cont:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/elbowplot_cont.txt'
     log:
@@ -109,7 +109,7 @@ rule elbowplot_DAPT:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/elbowplot_DAPT.txt'
     log:
@@ -128,7 +128,7 @@ rule barplot_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/barplot_integrated_integrated.txt'
     log:
@@ -148,7 +148,7 @@ rule dimplot_cluster_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_cluster_integrated_integrated.txt'
     log:
@@ -165,7 +165,7 @@ rule dimplot_cluster_cont:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_cluster_cont.txt'
     log:
@@ -182,7 +182,7 @@ rule dimplot_cluster_DAPT:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_cluster_DAPT.txt'
     log:
@@ -202,7 +202,7 @@ rule featureplot_ncount_rna_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_ncount_rna_integrated_integrated.txt'
     log:
@@ -222,7 +222,7 @@ rule featureplot_nfeature_rna_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_nfeature_rna_integrated_integrated.txt'
     log:
@@ -243,7 +243,7 @@ rule featureplot_percent_mt_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_percent_mt_integrated_integrated.txt'
     log:
@@ -264,7 +264,7 @@ rule featureplot_percent_rb_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_percent_rb_integrated_integrated.txt'
     log:
@@ -286,7 +286,7 @@ rule dimplot_cellcycle_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_cellcycle_integrated_integrated.txt'
     log:
@@ -306,7 +306,7 @@ rule featureplot_marker_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_marker_integrated_integrated.txt'
     log:
@@ -326,7 +326,7 @@ rule featureplot_cluster_marker_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_cluster_marker_integrated_integrated.txt'
     log:
@@ -347,7 +347,7 @@ rule featureplot_doublet_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/featureplot_doublet_integrated_integrated.txt'
     log:
@@ -366,7 +366,7 @@ rule plot_cells_traectory_integrated:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/plot_cells_trajectory_integrated_integrated.txt'
     log:
@@ -382,7 +382,7 @@ rule plot_cells_traectory_cont:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/plot_cells_trajectory_cont.txt'
     log:
@@ -398,7 +398,7 @@ rule plot_cells_traectory_DAPT:
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/plot_cells_trajectory_DAPT.txt'
     log:
@@ -417,7 +417,7 @@ rule scv_pl_proportions_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_proportions_integrated_dynamical.txt'
     log:
@@ -433,7 +433,7 @@ rule scv_pl_proportions_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_proportions_cont_dynamical.txt'
     log:
@@ -449,7 +449,7 @@ rule scv_pl_proportions_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_proportions_DAPT_dynamical.txt'
     log:
@@ -465,7 +465,7 @@ rule scv_pl_velocity_embedding_stream_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_stream_integrated_{mode}.txt'
     log:
@@ -481,7 +481,7 @@ rule scv_pl_velocity_embedding_stream_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_stream_cont_{mode}.txt'
     log:
@@ -497,7 +497,7 @@ rule scv_pl_velocity_embedding_stream_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_stream_DAPT_{mode}.txt'
     log:
@@ -513,7 +513,7 @@ rule scv_pl_velocity_embedding_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_integrated_{mode}.txt'
     log:
@@ -529,7 +529,7 @@ rule scv_pl_velocity_embedding_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_cont_{mode}.txt'
     log:
@@ -545,7 +545,7 @@ rule scv_pl_velocity_embedding_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_embedding_DAPT_{mode}.txt'
     log:
@@ -561,7 +561,7 @@ rule scv_pl_latenttime_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_latenttime_integrated_dynamical.txt'
     log:
@@ -577,7 +577,7 @@ rule scv_pl_latenttime_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_latenttime_cont_dynamical.txt'
     log:
@@ -593,7 +593,7 @@ rule scv_pl_latenttime_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_latenttime_DAPT_dynamical.txt'
     log:
@@ -609,7 +609,7 @@ rule scv_pl_heatmap_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_heatmap_integrated_dynamical.txt'
     log:
@@ -625,7 +625,7 @@ rule scv_pl_heatmap_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_heatmap_cont_dynamical.txt'
     log:
@@ -641,7 +641,7 @@ rule scv_pl_heatmap_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_heatmap_DAPT_dynamical.txt'
     log:
@@ -659,7 +659,7 @@ rule scv_pl_velocity_markers_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_markers_integrated_dynamical.txt'
     log:
@@ -677,7 +677,7 @@ rule scv_pl_velocity_markers_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_markers_cont_dynamical.txt'
     log:
@@ -695,7 +695,7 @@ rule scv_pl_velocity_markers_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scv_pl_velocity_markers_DAPT_dynamical.txt'
     log:

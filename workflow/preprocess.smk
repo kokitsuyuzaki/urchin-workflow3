@@ -33,7 +33,7 @@ rule gtf_hpbase:
     output:
         'data/hpbase/HpulGenome_v1_geneid.gtf'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/gtf_hpbase.txt'
     log:
@@ -47,7 +47,7 @@ rule gtf_echinobase:
     output:
         'data/echinobase/sp5_0_GCF_geneid.gtf'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/gtf_echinobase.txt'
     log:
@@ -64,7 +64,7 @@ rule preprocess_geneid_to_genename:
     output:
         'data/geneid_to_genename.csv'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/preprocess_geneid_to_genename.txt'
     log:
@@ -81,7 +81,7 @@ rule preprocess_annotation:
     output:
         'data/annotation.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/preprocess_annotation.txt'
     log:
@@ -98,7 +98,7 @@ rule preprocess_marker:
     output:
         'data/marker.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/preprocess_marker.txt'
     log:
@@ -120,7 +120,7 @@ rule preprocess_go:
         'data/go_mf_echinobase.RData',
         'data/go_cc_echinobase.RData'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/preprocess_go.txt'
     log:

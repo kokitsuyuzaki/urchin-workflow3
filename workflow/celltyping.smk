@@ -56,7 +56,7 @@ rule label_integrated:
     output:
         'output/hpbase/integrated/seurat_annotated.RData'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated.txt'
     log:
@@ -81,7 +81,7 @@ rule label_stratification:
         expand('output/hpbase/{time_str}/seurat_annotated.RData',
             time_str=TIMES_STR)
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/label_stratification.txt'
     log:
@@ -96,7 +96,7 @@ rule kana_integrated:
     output:
         'output/hpbase/integrated/kana/integrated.rds'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_integrated.txt'
     log:
@@ -112,7 +112,7 @@ rule kana_sample:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_{sample}.txt'
     log:
@@ -128,7 +128,7 @@ rule kana_condition:
     wildcard_constraints:
         condition='|'.join([re.escape(x) for x in CONDITIONS])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_condition_{condition}.txt'
     log:
@@ -144,7 +144,7 @@ rule kana_time:
     wildcard_constraints:
         time='|'.join([re.escape(x) for x in TIMES])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_time_{time}.txt'
     log:
@@ -160,7 +160,7 @@ rule kana_sample_stratified:
     wildcard_constraints:
         sample_str='|'.join([re.escape(x) for x in SAMPLES_STR])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_{sample_str}.txt'
     log:
@@ -176,7 +176,7 @@ rule kana_condition_stratified:
     wildcard_constraints:
         condition_str='|'.join([re.escape(x) for x in CONDITIONS_STR])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_condition_stratified_{condition_str}.txt'
     log:
@@ -192,7 +192,7 @@ rule kana_time_stratified:
     wildcard_constraints:
         time_str='|'.join([re.escape(x) for x in TIMES_STR])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/kana_time_stratified_{time_str}.txt'
     log:
@@ -209,7 +209,7 @@ rule kana_time_stratified:
 #     wildcard_constraints:
 #         sample='|'.join([re.escape(x) for x in SAMPLES])
 #     resources:
-#         mem_gb=1000
+#         mem_mb=1000000
 #     benchmark:
 #         'benchmarks/germlayer_label_hpbase_{sample}.txt'
 #     log:
@@ -224,7 +224,7 @@ rule kana_time_stratified:
 #     output:
 #         'output/hpbase/integrated/seurat_germlayer.RData'
 #     resources:
-#         mem_gb=1000
+#         mem_mb=1000000
 #     benchmark:
 #         'benchmarks/germlayer_label_integrated_hpbase_integrated.txt'
 #     log:
@@ -243,7 +243,7 @@ rule dimplot_celltype:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_celltype_hpbase_{sample}.txt'
     log:
@@ -258,7 +258,7 @@ rule dimplot_celltype_integrated:
         'plot/hpbase/integrated/dimplot_celltype.png',
         'plot/hpbase/integrated/dimplot_celltype_splitby.png'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_celltype_integrated_hpbase_integrated.txt'
     log:
@@ -274,7 +274,7 @@ rule dimplot_germlayer:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_germlayer_hpbase_{sample}.txt'
     log:
@@ -289,7 +289,7 @@ rule dimplot_germlayer_integrated:
         'plot/hpbase/integrated/dimplot_germlayer.png',
         'plot/hpbase/integrated/dimplot_germlayer_splitby.png'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dimplot_germlayer_integrated_hpbase_integrated.txt'
     log:
@@ -309,7 +309,7 @@ rule dotplot_celltype:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dotplot_celltype_hpbase_{sample}.txt'
     log:
@@ -325,7 +325,7 @@ rule dotplot_celltype_integrated:
         'plot/hpbase/integrated/dotplot_celltype.png',
         'plot/hpbase/integrated/dotplot_celltype_splitby.png'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/dotplot_celltype_integrated_hpbase_integrated.txt'
     log:
@@ -347,7 +347,7 @@ rule heatmap_celltype_integrated:
         'plot/hpbase/integrated/heatmap_celltype_t_pval.png',
         'plot/hpbase/integrated/heatmap_celltype_wilcox_pval.png'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/heatmap_celltype_integrated_hpbase_integrated.txt'
     log:

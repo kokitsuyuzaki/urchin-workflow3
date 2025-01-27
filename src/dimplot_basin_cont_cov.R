@@ -5,9 +5,9 @@ outfile1 <- commandArgs(trailingOnly=TRUE)[1]
 outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 
 # Loading
-all_states_cont <- unlist(read.delim('plot/hpbase/cont/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+all_states_cont <- unlist(read.delim('plot/hpbase/cont_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-basin_cont <- unlist(read.table('plot/hpbase/cont/Landscaper/Basin.tsv', header=FALSE))
+basin_cont <- unlist(read.table('plot/hpbase/cont_cov/Landscaper/Basin.tsv', header=FALSE))
 load('output/hpbase/cont_stratified/seurat.RData')
 
 # Sort

@@ -22,6 +22,19 @@ library("viridis")
 library("reshape2")
 library("qvalue")
 
+# Time Character to Numeric
+.timevec <- list(
+    "cont-24h" = 0.25,
+    "cont-36h" = 0.375,
+    "cont-48h" = 0.5,
+    "cont-72h" = 0.75,
+    "cont-96h" = 1,
+    "DAPT-24h" = 0.25,
+    "DAPT-36h" = 0.375,
+    "DAPT-48h" = 0.5,
+    "DAPT-72h" = 0.75,
+    "DAPT-96h" = 1)
+
 # Label Stratification
 .labelStratify <- function(seurat.integrated, target.pattern){
     target <- grep(target.pattern, seurat.integrated@meta.data$sample)

@@ -5,9 +5,9 @@ outfile1 <- commandArgs(trailingOnly=TRUE)[1]
 outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 
 # Loading
-all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-basin_DAPT <- unlist(read.table('plot/hpbase/DAPT/Landscaper/Basin.tsv', header=FALSE))
+basin_DAPT <- unlist(read.table('plot/hpbase/DAPT_cov/Landscaper/Basin.tsv', header=FALSE))
 load('output/hpbase/DAPT_stratified/seurat.RData')
 
 # Sort

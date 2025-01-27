@@ -22,7 +22,7 @@ rule preprocess_tensorlycv:
     container:
         'docker://koki/urchin_workflow_seurat:20230111'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/preprocess_tensorlycv.txt'
     log:
@@ -39,7 +39,7 @@ rule tensorlycv:
     container:
         'docker://ghcr.io/kokitsuyuzaki/tensorlycv:main'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/tensorlycv.txt'
     log:

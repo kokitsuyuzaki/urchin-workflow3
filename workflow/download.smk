@@ -30,7 +30,7 @@ rule download_hpbase:
     output:
         'data/hpbase/{file}'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/download_hpbase_{file}.txt'
     log:
@@ -42,7 +42,7 @@ rule download_echinobase:
     output:
         'data/echinobase/{file}'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/download_echinobase_{file}.txt'
     log:
@@ -54,7 +54,7 @@ rule download_go:
     output:
         'data/GeneGoTerms.txt'
     resources:
-        mem_gb=100
+        mem_mb=1000000
     benchmark:
         'benchmarks/download_go.txt'
     log:

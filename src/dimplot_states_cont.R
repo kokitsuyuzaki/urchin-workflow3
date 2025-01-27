@@ -7,7 +7,7 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 # Loading
 all_states_cont <- unlist(read.delim('plot/hpbase/cont/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-load('output/hpbase/cont/seurat.RData')
+load('output/hpbase/cont_stratified/seurat.RData')
 
 # Sort
 names(all_states_cont) <- NULL

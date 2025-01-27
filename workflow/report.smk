@@ -29,7 +29,7 @@ rule sctgif_integrated:
     output:
         'plot/hpbase/integrated/scTGIF/{go}/index.html'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/sctgif_integrated_{go}.txt'
     log:
@@ -44,7 +44,7 @@ rule sctgif_cont:
     output:
         'plot/hpbase/cont/scTGIF/{go}/index.html'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/sctgif_cont_{go}.txt'
     log:
@@ -59,7 +59,7 @@ rule sctgif_DAPT:
     output:
         'plot/hpbase/DAPT/scTGIF/{go}/index.html'
     resources:
-        mem_gb=500
+        mem_mb=1000000
     benchmark:
         'benchmarks/sctgif_DAPT_{go}.txt'
     log:

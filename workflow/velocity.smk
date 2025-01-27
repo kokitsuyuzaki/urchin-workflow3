@@ -34,7 +34,7 @@ rule velocyto:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/velocyto_{sample}.txt'
     log:
@@ -54,7 +54,7 @@ rule aggr_loom:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/aggr_loom.txt'
     log:
@@ -71,7 +71,7 @@ rule aggr_loom_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/aggr_loom_cont.txt'
     log:
@@ -88,7 +88,7 @@ rule aggr_loom_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/aggr_loom_DAPT.txt'
     log:
@@ -107,7 +107,7 @@ rule seurat2anndata_integrated:
     container:
         'docker://koki/velocytor:20221015'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat2anndata_integrated.txt'
     log:
@@ -123,7 +123,7 @@ rule seurat2anndata_cont:
     container:
         'docker://koki/velocytor:20221015'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat2anndata_cont.txt'
     log:
@@ -139,7 +139,7 @@ rule seurat2anndata_DAPT:
     container:
         'docker://koki/velocytor:20221015'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/seurat2anndata_DAPT.txt'
     log:
@@ -159,7 +159,7 @@ rule scvelo_integrated:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scvelo_integrated_{mode}.txt'
     log:
@@ -176,7 +176,7 @@ rule scvelo_cont:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scvelo_cont_{mode}.txt'
     log:
@@ -193,7 +193,7 @@ rule scvelo_DAPT:
     container:
         'docker://koki/velocyto:20221005'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/scvelo_DAPT_{mode}.txt'
     log:

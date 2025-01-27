@@ -26,7 +26,7 @@ rule template_matching:
         'output/hpbase/integrated/template_matching_{template}.RData',
         'output/hpbase/integrated/template_matching_{template}.xlsx'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/template_matching_{template}.txt'
     log:
@@ -40,7 +40,7 @@ rule plot_template_matching:
     output:
         'plot/hpbase/integrated/template_matching/{template}.png'
     resources:
-        mem_gb=1000
+        mem_mb=1000000
     benchmark:
         'benchmarks/plot_template_matching_{template}.txt'
     log:

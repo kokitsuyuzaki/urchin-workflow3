@@ -5,21 +5,21 @@ outfile1 <- commandArgs(trailingOnly=TRUE)[1]
 outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 
 # Loading
-all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-load('output/hpbase/DAPT_stratified/seurat.RData')
+all_states_cont <- unlist(read.delim('plot/hpbase/cont_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+load('output/hpbase/cont_stratified/seurat.RData')
 
 # Sort
-names(all_states_DAPT) <- NULL
-names(bin_data_DAPT) <- NULL
+names(all_states_cont) <- NULL
+names(bin_data_cont) <- NULL
 
 # 各データごとの状態No
-target_DAPT <- sapply(bin_data_DAPT, function(x){
-     which(all_states_DAPT == x)
+target_cont <- sapply(bin_data_cont, function(x){
+     which(all_states_cont == x)
 })
 
 # Assign Labels
-seurat.integrated$states <- target_DAPT
+seurat.integrated$states <- target_cont
 
 # Plot
 g <- DimPlot(seurat.integrated, reduction = "umap", group.by="states", label=FALSE, pt.size=2, label.size=6) + NoLegend()
@@ -32,4 +32,3 @@ g <- DimPlot(seurat.integrated, reduction = "umap", group.by="states", split.by=
 png(file=outfile2, width=2400, height=600)
 print(g)
 dev.off()
-

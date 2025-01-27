@@ -4,22 +4,22 @@ source("src/Functions.R")
 outfile <- commandArgs(trailingOnly=TRUE)[1]
 
 # Loading
-bindata_cont <- read.table('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE)
-load('output/hpbase/cont_stratified/seurat.RData')
+bindata_DAPT <- read.table('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE)
+load('output/hpbase/DAPT_stratified/seurat.RData')
 
 # Assign Labels
-for(i in seq_len(ncol(bindata_cont))){
-     cmd <- paste0("seurat.integrated$bindata_", i, " <- bindata_cont[, i]")
+for(i in seq_len(ncol(bindata_DAPT))){
+     cmd <- paste0("seurat.integrated$bindata_", i, " <- bindata_DAPT[, i]")
      eval(parse(text=cmd))
 }
 
 # Setting
-dir.create("plot/hpbase/cont/bindata/")
+dir.create("plot/hpbase/DAPT_cov/bindata/")
 
-# Plot cont
-for(i in seq_len(ncol(bindata_cont))){
-     filename1 <- paste0("plot/hpbase/cont/bindata/", i, ".png")
-     filename2 <- paste0("plot/hpbase/cont/bindata/", i, "_splitby.png")
+# Plot DAPT
+for(i in seq_len(ncol(bindata_DAPT))){
+     filename1 <- paste0("plot/hpbase/DAPT_cov/bindata/", i, ".png")
+     filename2 <- paste0("plot/hpbase/DAPT_cov/bindata/", i, "_splitby.png")
      groupname <- paste0("bindata_", i)
      # Plot
      g <- DimPlot(seurat.integrated, reduction = "umap", group.by=groupname, label=TRUE, pt.size=2, label.size=6, cols=c(4,2)) + NoLegend()

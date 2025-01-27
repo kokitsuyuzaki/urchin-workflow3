@@ -6,9 +6,9 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 outfile3 <- commandArgs(trailingOnly=TRUE)[3]
 
 # Loading
-all_states_integrated <- unlist(read.delim('plot/hpbase/integrated/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+all_states_integrated <- unlist(read.delim('plot/hpbase/integrated_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-energy_integrated <- unlist(read.table('plot/hpbase/integrated/Landscaper/E.tsv', header=FALSE))
+energy_integrated <- unlist(read.table('plot/hpbase/integrated_cov/Landscaper/E.tsv', header=FALSE))
 load('output/hpbase/integrated/seurat.RData')
 
 # rm \t

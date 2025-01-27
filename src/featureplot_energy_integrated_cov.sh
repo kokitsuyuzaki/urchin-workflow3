@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/deg_bindata_integrated.R $@
+Rscript src/featureplot_energy_integrated_cov.R $@

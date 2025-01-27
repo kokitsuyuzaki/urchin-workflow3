@@ -6,23 +6,23 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 outfile3 <- commandArgs(trailingOnly=TRUE)[3]
 
 # Loading
-all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-energy_DAPT <- unlist(read.table('plot/hpbase/DAPT/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/DAPT_stratified/seurat.RData')
+all_states_cont <- unlist(read.delim('plot/hpbase/cont_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+energy_cont <- unlist(read.table('plot/hpbase/cont_cov/Landscaper/E.tsv', header=FALSE))
+load('output/hpbase/cont_stratified/seurat.RData')
 
 # Sort
-names(all_states_DAPT) <- NULL
-names(bin_data_DAPT) <- NULL
+names(all_states_cont) <- NULL
+names(bin_data_cont) <- NULL
 
-target_DAPT <- sapply(bin_data_DAPT, function(x){
-     which(all_states_DAPT == x)
+target_cont <- sapply(bin_data_cont, function(x){
+     which(all_states_cont == x)
 })
 
-energy_DAPT_sorted <- energy_DAPT[target_DAPT]
+energy_cont_sorted <- energy_cont[target_cont]
 
 # Assign Labels
-seurat.integrated$energy <- energy_DAPT_sorted
+seurat.integrated$energy <- energy_cont_sorted
 
 # Plot
 g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2)
