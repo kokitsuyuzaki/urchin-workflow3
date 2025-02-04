@@ -28,11 +28,11 @@ energy_integrated_sorted <- energy_integrated[target_integrated]
 seurat.integrated$energy <- energy_integrated_sorted
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1)
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100))
 ggsave(file=outfile1, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = c("lightgrey", "blue"), limits=c(-6.5, 8.5))
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100), limits=c(-7.0, 8.5))
 ggsave(file=outfile2, g, dpi=200, width=6, height=6)
 
 # Plot

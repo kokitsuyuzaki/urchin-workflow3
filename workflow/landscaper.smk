@@ -7,6 +7,7 @@ from snakemake.utils import min_version
 min_version("6.5.3")
 
 SAMPLES = ["integrated", "cont", "DAPT", "integrated_cov", "cont_cov", "DAPT_cov"]
+SAMPLES2 = ["integrated", "cont_stratified", "DAPT_stratified"]
 PLOTFILES = ['ratio_group.png', 'Allstates.png', 'Freq_Prob_Energy.png', 'h.png', 'J.png', 'Basin.png', 'StatusNetwork_Subgraph.png', 'StatusNetwork_Subgraph_legend.png', 'StatusNetwork_Energy.png', 'StatusNetwork_Energy_legend.png', 'StatusNetwork_Ratio.png', 'StatusNetwork_Ratio_legend.png', 'StatusNetwork_State.png', 'StatusNetwork_State_legend.png', 'Landscape.png', 'discon_graph_1.png', 'discon_graph_2.png']
 
 rule all:
@@ -25,6 +26,8 @@ rule all:
             sample=SAMPLES),
         expand('plot/hpbase/{sample}/energy_splitby.png',
             sample=SAMPLES),
+        expand('plot/hpbase/{sample2}/cellular_density.png',
+            sample2=SAMPLES2),
         expand('plot/hpbase/{sample}/basin.png',
             sample=SAMPLES),
         expand('plot/hpbase/{sample}/basin_splitby.png',
@@ -434,6 +437,22 @@ rule featureplot_energy:
         'logs/featureplot_energy_{sample}.log'
     shell:
         'src/featureplot_energy_{wildcards.sample}.sh {output} >& {log}'
+
+rule plot_cellular_density:
+    input:
+        'output/hpbase/{sample2}/seurat_annotated.RData'
+    output:
+        'plot/hpbase/{sample2}/cellular_density.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20230616'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_cellular_density_{sample2}.txt'
+    log:
+        'logs/plot_cellular_density_{sample2}.log'
+    shell:
+        'src/plot_cellular_density.sh {input} {output} >& {log}'
 
 rule dimplot_basin:
     input:

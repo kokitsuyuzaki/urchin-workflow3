@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/monocle3.R $@
+Rscript src/start_id_celltype.R $@

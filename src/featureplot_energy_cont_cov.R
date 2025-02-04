@@ -25,13 +25,13 @@ energy_cont_sorted <- energy_cont[target_cont]
 seurat.integrated$energy <- energy_cont_sorted
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2)
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2) + scale_colour_gradientn(colours = viridis(100))
 png(file=outfile1, width=600, height=600)
 print(g)
 dev.off()
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2) + scale_colour_gradientn(colours = c("lightgrey", "blue"), limits=c(-6.5, 8.5))
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=2) + scale_colour_gradientn(colours = viridis(100), limits=c(-7.0, 8.5))
 png(file=outfile2, width=600, height=600)
 print(g)
 dev.off()

@@ -6,6 +6,7 @@ from snakemake.utils import min_version
 #################################
 min_version("6.5.3")
 
+METHODS = ["paga", "paga_tree", "comp1", "mst", "angle"]
 MODES = ['deterministic', 'stochastic', 'dynamical']
 INTEGRATED_PLOTS = ['elbowplot.png', 'barplot.png',
     'dimplot_cluster.png', 'dimplot_cluster_splitby.png',
@@ -19,19 +20,29 @@ INTEGRATED_PLOTS = ['elbowplot.png', 'barplot.png',
     'featureplot_doublet.png', 'featureplot_doublet_splitby.png',
     'plot_cells_trajectory.png']
 
-CONT_PLOTS = ['elbowplot.png', 'dimplot_cluster.png', 'dimplot_cluster_splitby.png', 'plot_cells_trajectory.png']
+CONT_PLOTS = ['elbowplot.png', 'dimplot_cluster.png', 'dimplot_cluster_splitby.png']
 
 DAPT_PLOTS = CONT_PLOTS
 
+DYNTYPES = ['celltype', 'germlayer']
+LABELTYPES = ['clusters', 'sample', 'celltype', 'germlayer']
 rule all:
     input:
         # Basic Plots
+        expand('plot/hpbase/integrated/dynverse_{method}_{dyntype}_{labeltype}.png',
+            method=METHODS, dyntype=DYNTYPES, labeltype=LABELTYPES),
+        expand('plot/hpbase/cont_stratified/dynverse_{method}_{dyntype}_{labeltype}.png',
+            method=METHODS, dyntype=DYNTYPES, labeltype=LABELTYPES),
+        expand('plot/hpbase/DAPT_stratified/dynverse_{method}_{dyntype}_{labeltype}.png',
+            method=METHODS, dyntype=DYNTYPES, labeltype=LABELTYPES),
         expand('plot/hpbase/integrated/{integrated_plot}',
             integrated_plot=INTEGRATED_PLOTS),
         expand('plot/hpbase/cont/{cont_plot}',
             cont_plot=CONT_PLOTS),
         expand('plot/hpbase/DAPT/{dapt_plot}',
             dapt_plot=DAPT_PLOTS),
+        'plot/hpbase/cont_stratified/plot_cells_trajectory.png',
+        'plot/hpbase/DAPT_stratified/plot_cells_trajectory.png',
         # Velocity Plots (Integrated)
         'plot/hpbase/integrated/scv_pl_proportions_integrated_dynamical.png',
         expand('plot/hpbase/integrated/scv_pl_velocity_embedding_stream_integrated_{mode}.png',
@@ -358,7 +369,7 @@ rule featureplot_doublet_integrated:
 #################################
 # Trajectory Inference
 #################################
-rule plot_cells_traectory_integrated:
+rule plot_cells_trajectory_integrated:
     input:
         'output/hpbase/integrated/monocle3.RData'
     output:
@@ -374,11 +385,11 @@ rule plot_cells_traectory_integrated:
     shell:
         'src/plot_cells_trajectory.sh {input} {output} >& {log}'
 
-rule plot_cells_traectory_cont:
+rule plot_cells_trajectory_cont:
     input:
-        'output/hpbase/cont/monocle3.RData'
+        'output/hpbase/cont_stratified/monocle3.RData'
     output:
-        'plot/hpbase/cont/plot_cells_trajectory.png'
+        'plot/hpbase/cont_stratified/plot_cells_trajectory.png'
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
@@ -390,11 +401,11 @@ rule plot_cells_traectory_cont:
     shell:
         'src/plot_cells_trajectory.sh {input} {output} >& {log}'
 
-rule plot_cells_traectory_DAPT:
+rule plot_cells_trajectory_DAPT:
     input:
-        'output/hpbase/DAPT/monocle3.RData'
+        'output/hpbase/DAPT_stratified/monocle3.RData'
     output:
-        'plot/hpbase/DAPT/plot_cells_trajectory.png'
+        'plot/hpbase/DAPT_stratified/plot_cells_trajectory.png'
     container:
         'docker://koki/urchin_workflow_seurat:20230616'
     resources:
@@ -405,6 +416,126 @@ rule plot_cells_traectory_DAPT:
         'logs/plot_cells_trajectory_DAPT.log'
     shell:
         'src/plot_cells_trajectory.sh {input} {output} >& {log}'
+
+rule plot_dynverse_integrated_celltype:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData',
+        'output/hpbase/integrated/dynverse/{method}_celltype.RData'
+    output:
+        'plot/hpbase/integrated/dynverse_{method}_celltype_clusters.png',
+        'plot/hpbase/integrated/dynverse_{method}_celltype_sample.png',
+        'plot/hpbase/integrated/dynverse_{method}_celltype_celltype.png',
+        'plot/hpbase/integrated/dynverse_{method}_celltype_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_integrated_{method}.txt'
+    log:
+        'logs/plot_dynverse_integrated_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
+
+rule plot_dynverse_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData',
+        'output/hpbase/integrated/dynverse/{method}_germlayer.RData'
+    output:
+        'plot/hpbase/integrated/dynverse_{method}_germlayer_clusters.png',
+        'plot/hpbase/integrated/dynverse_{method}_germlayer_sample.png',
+        'plot/hpbase/integrated/dynverse_{method}_germlayer_celltype.png',
+        'plot/hpbase/integrated/dynverse_{method}_germlayer_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_integrated_{method}.txt'
+    log:
+        'logs/plot_dynverse_integrated_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
+
+rule plot_dynverse_cont_stratified_celltype:
+    input:
+        'output/hpbase/cont_stratified/seurat_annotated.RData',
+        'output/hpbase/cont_stratified/dynverse/{method}_celltype.RData'
+    output:
+        'plot/hpbase/cont_stratified/dynverse_{method}_celltype_clusters.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_celltype_sample.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_celltype_celltype.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_celltype_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_cont_stratified_{method}.txt'
+    log:
+        'logs/plot_dynverse_cont_stratified_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
+
+rule plot_dynverse_cont_stratified_germlayer:
+    input:
+        'output/hpbase/cont_stratified/seurat_annotated.RData',
+        'output/hpbase/cont_stratified/dynverse/{method}_germlayer.RData'
+    output:
+        'plot/hpbase/cont_stratified/dynverse_{method}_germlayer_clusters.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_germlayer_sample.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_germlayer_celltype.png',
+        'plot/hpbase/cont_stratified/dynverse_{method}_germlayer_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_cont_stratified_{method}.txt'
+    log:
+        'logs/plot_dynverse_cont_stratified_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
+
+rule plot_dynverse_DAPT_stratified_celltype:
+    input:
+        'output/hpbase/DAPT_stratified/seurat_annotated.RData',
+        'output/hpbase/DAPT_stratified/dynverse/{method}_celltype.RData'
+    output:
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_celltype_clusters.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_celltype_sample.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_celltype_celltype.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_celltype_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_DAPT_stratified_{method}.txt'
+    log:
+        'logs/plot_dynverse_DAPT_stratified_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
+
+rule plot_dynverse_DAPT_stratified_germlayer:
+    input:
+        'output/hpbase/DAPT_stratified/seurat_annotated.RData',
+        'output/hpbase/DAPT_stratified/dynverse/{method}_germlayer.RData'
+    output:
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_germlayer_clusters.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_germlayer_sample.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_germlayer_celltype.png',
+        'plot/hpbase/DAPT_stratified/dynverse_{method}_germlayer_germlayer.png'
+    container:
+        'docker://koki/dynverse:20250203'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/plot_dynverse_DAPT_stratified_{method}.txt'
+    log:
+        'logs/plot_dynverse_DAPT_stratified_{method}.log'
+    shell:
+        'src/plot_dynverse.sh {input} {output} >& {log}'
 
 #################################
 # RNA Velocity

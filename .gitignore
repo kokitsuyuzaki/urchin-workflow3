@@ -1,3 +1,5 @@
+.local
+.apptainer
 .DS_Store
 *.sh.*
 */.nfs*
@@ -19,3 +21,4 @@ benchmarks
 plot/hpbase
 plot/echinobase
 .conda
+cache_dir
