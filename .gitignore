@@ -1,3 +1,4 @@
+.fuse*
 .local
 .apptainer
 .DS_Store

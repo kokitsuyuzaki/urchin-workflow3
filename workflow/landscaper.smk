@@ -20,12 +20,20 @@ rule all:
         'plot/hpbase/integrated_cov/J.png',
         expand('plot/hpbase/{sample}/bindata/FINISH',
             sample=SAMPLES),
+        expand('plot/hpbase/{sample}/sce.RData',
+            sample=SAMPLES),
         expand('plot/hpbase/{sample}/energy.png',
+            sample=SAMPLES),
+        expand('plot/hpbase/{sample}/energy_hex.png',
             sample=SAMPLES),
         expand('plot/hpbase/{sample}/energy_rescaled.png',
             sample=SAMPLES),
+        expand('plot/hpbase/{sample}/energy_rescaled_hex.png',
+            sample=SAMPLES),
         expand('plot/hpbase/{sample}/energy_splitby.png',
             sample=SAMPLES),
+        'plot/hpbase/cont_DAPT/energy_diff.png',
+        'plot/hpbase/cont_DAPT_cov/energy_diff.png',
         expand('plot/hpbase/{sample2}/cellular_density.png',
             sample2=SAMPLES2),
         expand('plot/hpbase/{sample}/basin.png',
@@ -72,7 +80,7 @@ rule preprocess_sbmfcv:
         'output/hpbase/DAPT/cov.tsv',
         'output/hpbase/DAPT_cov/cov.tsv'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -109,7 +117,7 @@ rule stratify:
         'output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv',
         'output/hpbase/DAPT_cov/sbmfcv/BIN_DATA.tsv'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -126,7 +134,7 @@ rule deg_bindata:
     output:
         'output/hpbase/{sample}/sbmfcv/deg_bindata.xlsx'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -143,7 +151,7 @@ rule featureplot_deg_bindata:
     output:
         'plot/hpbase/{sample}/sbmfcv/deg/FINISH'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_gb=1000
     benchmark:
@@ -370,7 +378,7 @@ rule plot_h:
         'plot/hpbase/integrated/h.png',
         'plot/hpbase/integrated_cov/h.png'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -390,7 +398,7 @@ rule plot_J:
         'plot/hpbase/integrated/J.png',
         'plot/hpbase/integrated_cov/J.png'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -409,7 +417,7 @@ rule dimplot_bindata:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -424,11 +432,14 @@ rule featureplot_energy:
         expand('plot/hpbase/{sample}/Landscaper/plot/{p}',
             sample=SAMPLES, p=PLOTFILES)
     output:
+        'plot/hpbase/{sample}/sce.RData',
         'plot/hpbase/{sample}/energy.png',
+        'plot/hpbase/{sample}/energy_hex.png',
         'plot/hpbase/{sample}/energy_rescaled.png',
+        'plot/hpbase/{sample}/energy_rescaled_hex.png',
         'plot/hpbase/{sample}/energy_splitby.png'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -438,13 +449,49 @@ rule featureplot_energy:
     shell:
         'src/featureplot_energy_{wildcards.sample}.sh {output} >& {log}'
 
+rule featureplot_energy_cont_dapt:
+    input:
+        'plot/hpbase/integrated/sce.RData',
+        expand('plot/hpbase/cont/Landscaper/plot/{p}', p=PLOTFILES),
+        expand('plot/hpbase/DAPT/Landscaper/plot/{p}', p=PLOTFILES)
+    output:
+        'plot/hpbase/cont_DAPT/energy_diff.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20250213'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/featureplot_energy_cont_DAPT.txt'
+    log:
+        'logs/featureplot_energy_cont_DAPT.log'
+    shell:
+        'src/featureplot_energy_cont_DAPT.sh >& {log}'
+
+rule featureplot_energy_cont_dapt_cov:
+    input:
+        'plot/hpbase/integrated_cov/sce.RData',
+        expand('plot/hpbase/cont_cov/Landscaper/plot/{p}', p=PLOTFILES),
+        expand('plot/hpbase/DAPT_cov/Landscaper/plot/{p}', p=PLOTFILES)
+    output:
+        'plot/hpbase/cont_DAPT_cov/energy_diff.png'
+    container:
+        'docker://koki/urchin_workflow_seurat:20250213'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/featureplot_energy_cont_DAPT_cov.txt'
+    log:
+        'logs/featureplot_energy_cont_DAPT_cov.log'
+    shell:
+        'src/featureplot_energy_cont_DAPT_cov.sh >& {log}'
+
 rule plot_cellular_density:
     input:
         'output/hpbase/{sample2}/seurat_annotated.RData'
     output:
         'plot/hpbase/{sample2}/cellular_density.png'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -464,7 +511,7 @@ rule dimplot_basin:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
@@ -484,7 +531,7 @@ rule dimplot_states:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20250213'
     resources:
         mem_mb=1000000
     benchmark:
