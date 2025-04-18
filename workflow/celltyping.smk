@@ -17,6 +17,8 @@ container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
+        expand('output/hpbase/{sample}/seurat_annotated_lt.RData',
+            sample=SAMPLES),
         # Kana
         'output/hpbase/integrated/kana/integrated.rds',
         expand('output/hpbase/{sample}/kana/{sample}.rds',
@@ -88,6 +90,22 @@ rule label_stratification:
         'logs/label_stratification.log'
     shell:
         'src/label_stratification.sh >& {log}'
+
+# For label transfer by urchin-integration-workflow
+rule label_transfer:
+    input:
+        'data/geneid_to_genename.csv',
+        'output/hpbase/{sample}/seurat_annotated.RData'
+    output:
+        'output/hpbase/{sample}/seurat_annotated_lt.RData'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/label_transfer_{sample}.txt'
+    log:
+        'logs/label_transfer_{sample}.log'
+    shell:
+        'src/label_transfer.sh {wildcards.sample} {input} {output} >& {log}'
 
 # Kana
 rule kana_integrated:
@@ -199,38 +217,6 @@ rule kana_time_stratified:
         'logs/kana_time_stratified_{time_str}.log'
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
-
-# rule germlayer_label:
-#     input:
-#         'output/hpbase/{sample}/seurat.RData',
-#         'data/Shimoda/cluster_celltype.xlsx'
-#     output:
-#         'output/hpbase/{sample}/seurat_germlayer.RData'
-#     wildcard_constraints:
-#         sample='|'.join([re.escape(x) for x in SAMPLES])
-#     resources:
-#         mem_mb=1000000
-#     benchmark:
-#         'benchmarks/germlayer_label_hpbase_{sample}.txt'
-#     log:
-#         'logs/germlayer_label_hpbase_{sample}.log'
-#     shell:
-#         'src/germlayer_label.sh {input} {output} >& {log}'
-
-# rule germlayer_label_integrated:
-#     input:
-#         'output/hpbase/integrated/seurat.RData',
-#         'data/Shimoda/cluster_celltype.xlsx'
-#     output:
-#         'output/hpbase/integrated/seurat_germlayer.RData'
-#     resources:
-#         mem_mb=1000000
-#     benchmark:
-#         'benchmarks/germlayer_label_integrated_hpbase_integrated.txt'
-#     log:
-#         'logs/germlayer_label_integrated_hpbase_integrated.log'
-#     shell:
-#         'src/germlayer_label_integrated.sh {input} {output} >& {log}'
 
 #################################
 # Dimplot

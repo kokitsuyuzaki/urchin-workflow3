@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/germlayer_label.R $@
+Rscript src/label_transfer.R $@

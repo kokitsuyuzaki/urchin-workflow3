@@ -18,8 +18,6 @@ rule all:
             condition=CONDITIONS),
         expand('output/hpbase/{time}/seurat.RData',
             time=TIMES),
-        expand('output/echinobase/{sample}/seurat_lt.RData',
-            sample=SAMPLES),
         'output/hpbase/integrated/markers.xlsx',
         'output/hpbase/cont_stratified/seurat.RData',
         'output/hpbase/DAPT_stratified/seurat.RData',
@@ -95,21 +93,6 @@ rule seurat_integration:
         'logs/seurat_integration.log'
     shell:
         'src/seurat_integration.sh {output} >& {log}'
-
-rule seurat_for_labeltransfer:
-    input:
-        'data/geneid_to_genename.csv',
-        'output/echinobase/{sample}/outs/web_summary.html'
-    output:
-        'output/echinobase/{sample}/seurat_lt.RData'
-    resources:
-        mem_mb=1000000
-    benchmark:
-        'benchmarks/seurat_echinobase_{sample}.txt'
-    log:
-        'logs/seurat_echinobase_{sample}.log'
-    shell:
-        'src/seurat_lt.sh {wildcards.sample} {output} >& {log}'
 
 rule seurat_findconservedmarkers_integrated:
     input:
