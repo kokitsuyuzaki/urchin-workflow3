@@ -17,6 +17,8 @@ container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
+        'plot/hpbase/integrated/dimplot_neurons.png',
+        'plot/hpbase/integrated/dimplot_neurons_splitby.png',
         expand('output/hpbase/{sample}/seurat_annotated_lt.RData',
             sample=SAMPLES),
         # Kana
@@ -65,6 +67,20 @@ rule label_integrated:
         'logs/label_integrated_hpbase_integrated.log'
     shell:
         'src/label_integrated.sh {input} {output} >& {log}'
+
+rule label_integrated_neurons:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/seurat_annotated_neurons.RData'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/label_integrated_hpbase_integrated_neurons.txt'
+    log:
+        'logs/label_integrated_hpbase_integrated_neurons.log'
+    shell:
+        'src/label_integrated_neurons.sh {input} {output} >& {log}'
 
 rule label_stratification:
     input:
@@ -282,6 +298,21 @@ rule dimplot_germlayer_integrated:
         'logs/dimplot_germlayer_integrated_hpbase_integrated.log'
     shell:
         'src/dimplot_germlayer_integrated.sh {input} {output} >& {log}'
+
+rule dimplot_neurons_integrated:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons.RData'
+    output:
+        'plot/hpbase/integrated/dimplot_neurons.png',
+        'plot/hpbase/integrated/dimplot_neurons_splitby.png'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/dimplot_neurons_integrated_hpbase_integrated.txt'
+    log:
+        'logs/dimplot_neurons_integrated_hpbase_integrated.log'
+    shell:
+        'src/dimplot_neurons_integrated.sh {input} {output} >& {log}'
 
 #################################
 # Dotplot
