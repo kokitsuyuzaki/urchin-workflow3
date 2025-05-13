@@ -17,12 +17,13 @@ container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
-        'plot/hpbase/integrated/dimplot_neurons.png',
-        'plot/hpbase/integrated/dimplot_neurons_splitby.png',
+        # Label transfer
         expand('output/hpbase/{sample}/seurat_annotated_lt.RData',
             sample=SAMPLES),
         # Kana
         'output/hpbase/integrated/kana/integrated.rds',
+        'output/hpbase/integrated/kana/neurons.rds',
+        'output/hpbase/integrated/kana/cluster11.rds',
         expand('output/hpbase/{sample}/kana/{sample}.rds',
             sample=SAMPLES),
         expand('output/hpbase/{condition}/kana/{condition}.rds',
@@ -35,6 +36,7 @@ rule all:
             condition_str=CONDITIONS_STR),
         expand('output/hpbase/{time_str}/kana/{time_str}.rds',
             time_str=TIMES_STR),
+        # Dimplot
         expand('plot/hpbase/{sample}/dimplot_celltype.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/dimplot_celltype.png',
@@ -42,6 +44,11 @@ rule all:
         expand('plot/hpbase/{sample}/dimplot_germlayer.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/dimplot_germlayer.png',
+        'plot/hpbase/integrated/dimplot_neurons.png',
+        'plot/hpbase/integrated/dimplot_neurons_splitby.png',
+        'plot/hpbase/integrated/dimplot_cluster11.png',
+        'plot/hpbase/integrated/dimplot_cluster11_splitby.png',
+        # Dotplot
         expand('plot/hpbase/{sample}/dotplot_celltype.png',
             sample=SAMPLES),
         'plot/hpbase/integrated/heatmap_celltype_cont.png',
@@ -81,6 +88,20 @@ rule label_integrated_neurons:
         'logs/label_integrated_hpbase_integrated_neurons.log'
     shell:
         'src/label_integrated_neurons.sh {input} {output} >& {log}'
+
+rule label_integrated_cluster11:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/seurat_annotated_cluster11.RData'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/label_integrated_hpbase_integrated_cluster11.txt'
+    log:
+        'logs/label_integrated_hpbase_integrated_cluster11.log'
+    shell:
+        'src/label_integrated_cluster11.sh {input} {output} >& {log}'
 
 rule label_stratification:
     input:
@@ -135,6 +156,34 @@ rule kana_integrated:
         'benchmarks/kana_integrated.txt'
     log:
         'logs/kana_integrated.log'
+    shell:
+        'src/kana_integrated.sh {input} {output} >& {log}'
+
+rule kana_integrated_neurons:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons.RData'
+    output:
+        'output/hpbase/integrated/kana/neurons.rds'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/kana_integrated_neurons.txt'
+    log:
+        'logs/kana_integrated_neurons.log'
+    shell:
+        'src/kana_integrated.sh {input} {output} >& {log}'
+
+rule kana_integrated_cluster11:
+    input:
+        'output/hpbase/integrated/seurat_annotated_cluster11.RData'
+    output:
+        'output/hpbase/integrated/kana/cluster11.rds'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/kana_integrated_cluster11.txt'
+    log:
+        'logs/kana_integrated_cluster11.log'
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
@@ -313,6 +362,21 @@ rule dimplot_neurons_integrated:
         'logs/dimplot_neurons_integrated_hpbase_integrated.log'
     shell:
         'src/dimplot_neurons_integrated.sh {input} {output} >& {log}'
+
+rule dimplot_cluster11_integrated:
+    input:
+        'output/hpbase/integrated/seurat_annotated_cluster11.RData'
+    output:
+        'plot/hpbase/integrated/dimplot_cluster11.png',
+        'plot/hpbase/integrated/dimplot_cluster11_splitby.png'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/dimplot_cluster11_integrated_hpbase_integrated.txt'
+    log:
+        'logs/dimplot_cluster11_integrated_hpbase_integrated.log'
+    shell:
+        'src/dimplot_cluster11_integrated.sh {input} {output} >& {log}'
 
 #################################
 # Dotplot
