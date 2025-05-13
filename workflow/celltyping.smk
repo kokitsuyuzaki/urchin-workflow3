@@ -12,6 +12,8 @@ CONDITIONS = ['cont', 'DAPT']
 CONDITIONS_STR = ['cont_stratified', 'DAPT_stratified']
 TIMES = ['24h', '36h', '48h', '72h', '96h']
 TIMES_STR = ['24h_stratified', '36h_stratified', '48h_stratified', '72h_stratified', '96h_stratified']
+CLUSTERS = list(range(41))
+NEURONS_CLUSTERS = list(range(18))
 
 container: 'docker://koki/urchin_workflow_seurat:20230616'
 
@@ -23,7 +25,10 @@ rule all:
         # Kana
         'output/hpbase/integrated/kana/integrated.rds',
         'output/hpbase/integrated/kana/neurons.rds',
-        'output/hpbase/integrated/kana/cluster11.rds',
+        expand('output/hpbase/integrated/kana/cluster{cl}.rds',
+            cl=CLUSTERS),
+        expand('output/hpbase/integrated/kana/neurons_cluster{ncl}.rds',
+            ncl=NEURONS_CLUSTERS),
         expand('output/hpbase/{sample}/kana/{sample}.rds',
             sample=SAMPLES),
         expand('output/hpbase/{condition}/kana/{condition}.rds',
@@ -75,6 +80,7 @@ rule label_integrated:
     shell:
         'src/label_integrated.sh {input} {output} >& {log}'
 
+# Stratification
 rule label_integrated_neurons:
     input:
         'output/hpbase/integrated/seurat_annotated.RData'
@@ -89,19 +95,33 @@ rule label_integrated_neurons:
     shell:
         'src/label_integrated_neurons.sh {input} {output} >& {log}'
 
-rule label_integrated_cluster11:
+rule label_integrated_neurons_clusters:
     input:
-        'output/hpbase/integrated/seurat_annotated.RData'
+        'output/hpbase/integrated/seurat_annotated_neurons.RData'
     output:
-        'output/hpbase/integrated/seurat_annotated_cluster11.RData'
+        'output/hpbase/integrated/seurat_annotated_neurons_cluster{ncl}.RData'
     resources:
         mem_mb=1000000
     benchmark:
-        'benchmarks/label_integrated_hpbase_integrated_cluster11.txt'
+        'benchmarks/label_integrated_hpbase_integrated_neurons_cluster{ncl}.txt'
     log:
-        'logs/label_integrated_hpbase_integrated_cluster11.log'
+        'logs/label_integrated_hpbase_integrated_neurons_cluster{ncl}.log'
     shell:
-        'src/label_integrated_cluster11.sh {input} {output} >& {log}'
+        'src/label_integrated_clusters.sh {input} {output} {wildcards.ncl} >& {log}'
+
+rule label_integrated_clusters:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/seurat_annotated_cluster{cl}.RData'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/label_integrated_hpbase_integrated_cluster{cl}.txt'
+    log:
+        'logs/label_integrated_hpbase_integrated_cluster{cl}.log'
+    shell:
+        'src/label_integrated_clusters.sh {input} {output} {wildcards.cl} >& {log}'
 
 rule label_stratification:
     input:
@@ -173,17 +193,31 @@ rule kana_integrated_neurons:
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
-rule kana_integrated_cluster11:
+rule kana_integrated_clusters:
     input:
-        'output/hpbase/integrated/seurat_annotated_cluster11.RData'
+        'output/hpbase/integrated/seurat_annotated_cluster{cl}.RData'
     output:
-        'output/hpbase/integrated/kana/cluster11.rds'
+        'output/hpbase/integrated/kana/cluster{cl}.rds'
     resources:
         mem_mb=1000000
     benchmark:
-        'benchmarks/kana_integrated_cluster11.txt'
+        'benchmarks/kana_integrated_cluster{cl}.txt'
     log:
-        'logs/kana_integrated_cluster11.log'
+        'logs/kana_integrated_cluster{cl}.log'
+    shell:
+        'src/kana_integrated.sh {input} {output} >& {log}'
+
+rule kana_integrated_neurons_clusters:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_cluster{cl}.RData'
+    output:
+        'output/hpbase/integrated/kana/neurons_cluster{cl}.rds'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/kana_integrated_cluster{cl}.txt'
+    log:
+        'logs/kana_integrated_cluster{cl}.log'
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
