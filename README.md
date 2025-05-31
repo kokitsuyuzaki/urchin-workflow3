@@ -29,10 +29,6 @@ This workflow consists of 12 workflows as follows:
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/trajectory.png?raw=true)
 
-- **workflow/velocity.smk**: RNA velocity analysis by `Velocyto`, `scVelo`, and `Velociraptor`.
-
-![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/velocity.png?raw=true)
-
 - **workflow/plot.smk**: Plots against cluster labels (before celltyping)
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/plot.png?raw=true)
@@ -44,6 +40,10 @@ This workflow consists of 12 workflows as follows:
 - **workflow/celltyping.smk**: Celltyping based on manual selection of cluster-specific markers
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/celltyping.png?raw=true)
+
+- **workflow/velocity.smk**: RNA velocity analysis by `Velocyto` and `scVelo`.
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/velocity.png?raw=true)
 
 - **workflow/template_matching.smk**: Template matching for Hp-Opn5L, Hp-Tph, and Hp-Delta
 

@@ -26,6 +26,8 @@ DAPT_PLOTS = CONT_PLOTS
 
 DYNTYPES = ['celltype', 'germlayer']
 LABELTYPES = ['clusters', 'sample', 'celltype', 'germlayer']
+GERM_LAYER = ['ectoderm', 'mesoderm', 'endoderm']
+
 rule all:
     input:
         # Basic Plots
@@ -75,7 +77,58 @@ rule all:
         'plot/hpbase/DAPT/scv_pl_heatmap_DAPT_dynamical.png',
         'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_dynamical_1.png',
         'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_dynamical_2.png',
-        'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_dynamical_3.png'
+        'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_dynamical_3.png',
+        # Velocity Plots (Integrated) × Germlayer
+        expand('plot/hpbase/integrated/scv_pl_proportions_integrated_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/integrated/scv_pl_velocity_embedding_stream_integrated_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/integrated/scv_pl_velocity_embedding_integrated_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/integrated/scv_pl_latenttime_integrated_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/integrated/scv_pl_heatmap_integrated_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_1.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_2.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_3.png',
+            gl=GERM_LAYER),
+        # Control × Germlayer
+        expand('plot/hpbase/cont/scv_pl_proportions_cont_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/cont/scv_pl_velocity_embedding_stream_cont_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/cont/scv_pl_velocity_embedding_cont_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/cont/scv_pl_latenttime_cont_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/cont/scv_pl_heatmap_cont_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_1.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_2.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_3.png',
+            gl=GERM_LAYER),
+        # DAPT × Germlayer
+        expand('plot/hpbase/DAPT/scv_pl_proportions_DAPT_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/DAPT/scv_pl_velocity_embedding_stream_DAPT_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/DAPT/scv_pl_velocity_embedding_DAPT_{gl}_{mode}.png',
+            gl=GERM_LAYER, mode=MODES),
+        expand('plot/hpbase/DAPT/scv_pl_latenttime_DAPT_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/DAPT/scv_pl_heatmap_DAPT_{gl}_dynamical.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_1.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_2.png',
+            gl=GERM_LAYER),
+        expand('plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_3.png',
+            gl=GERM_LAYER)
 
 #################################
 # Elbow Plot
@@ -593,6 +646,8 @@ rule scv_pl_velocity_embedding_stream_integrated:
         'output/hpbase/integrated/velocyto/integrated_{mode}.h5ad'
     output:
         'plot/hpbase/integrated/scv_pl_velocity_embedding_stream_integrated_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -609,6 +664,8 @@ rule scv_pl_velocity_embedding_stream_cont:
         'output/hpbase/cont/velocyto/cont_{mode}.h5ad'
     output:
         'plot/hpbase/cont/scv_pl_velocity_embedding_stream_cont_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -625,6 +682,8 @@ rule scv_pl_velocity_embedding_stream_DAPT:
         'output/hpbase/DAPT/velocyto/DAPT_{mode}.h5ad'
     output:
         'plot/hpbase/DAPT/scv_pl_velocity_embedding_stream_DAPT_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -641,6 +700,8 @@ rule scv_pl_velocity_embedding_integrated:
         'output/hpbase/integrated/velocyto/integrated_{mode}.h5ad'
     output:
         'plot/hpbase/integrated/scv_pl_velocity_embedding_integrated_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -657,6 +718,8 @@ rule scv_pl_velocity_embedding_cont:
         'output/hpbase/cont/velocyto/cont_{mode}.h5ad'
     output:
         'plot/hpbase/cont/scv_pl_velocity_embedding_cont_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -673,6 +736,8 @@ rule scv_pl_velocity_embedding_DAPT:
         'output/hpbase/DAPT/velocyto/DAPT_{mode}.h5ad'
     output:
         'plot/hpbase/DAPT/scv_pl_velocity_embedding_DAPT_{mode}.png'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -831,5 +896,320 @@ rule scv_pl_velocity_markers_DAPT:
         'benchmarks/scv_pl_velocity_markers_DAPT_dynamical.txt'
     log:
         'logs/scv_pl_velocity_markers_DAPT_dynamical.log'
+    shell:
+        'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'
+
+#################################
+# RNA Velocity (Germ Layer)
+#################################
+rule scv_pl_proportions_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_proportions_integrated_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_proportions_integrated_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_proportions_integrated_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_proportions.sh {input} {output} >& {log}'
+
+rule scv_pl_proportions_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_proportions_cont_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_proportions_cont_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_proportions_cont_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_proportions.sh {input} {output} >& {log}'
+
+rule scv_pl_proportions_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_proportions_DAPT_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_proportions_DAPT_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_proportions_DAPT_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_proportions.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_stream_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_velocity_embedding_stream_integrated_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_stream_integrated_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_stream_integrated_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_stream_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_velocity_embedding_stream_cont_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_stream_cont_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_stream_cont_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_stream_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_velocity_embedding_stream_DAPT_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_stream_DAPT_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_stream_DAPT_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding_stream.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_velocity_embedding_integrated_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_integrated_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_integrated_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_velocity_embedding_cont_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_cont_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_cont_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_embedding_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_{mode}.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_velocity_embedding_DAPT_{gl}_{mode}.png'
+    wildcard_constraints:
+        gl='|'.join([re.escape(x) for x in GERM_LAYER]),
+        mode='|'.join([re.escape(x) for x in MODES])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_embedding_DAPT_{gl}_{mode}.txt'
+    log:
+        'logs/scv_pl_velocity_embedding_DAPT_{gl}_{mode}.log'
+    shell:
+        'src/scv_pl_velocity_embedding.sh {input} {output} >& {log}'
+
+rule scv_pl_latenttime_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_latenttime_integrated_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_latenttime_integrated_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_latenttime_integrated_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_latenttime.sh {input} {output} >& {log}'
+
+rule scv_pl_latenttime_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_latenttime_cont_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_latenttime_cont_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_latenttime_cont_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_latenttime.sh {input} {output} >& {log}'
+
+rule scv_pl_latenttime_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_latenttime_DAPT_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_latenttime_DAPT_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_latenttime_DAPT_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_latenttime.sh {input} {output} >& {log}'
+
+rule scv_pl_heatmap_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_heatmap_integrated_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_heatmap_integrated_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_heatmap_integrated_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_heatmap.sh {input} {output} >& {log}'
+
+rule scv_pl_heatmap_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_heatmap_cont_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_heatmap_cont_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_heatmap_cont_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_heatmap.sh {input} {output} >& {log}'
+
+rule scv_pl_heatmap_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_heatmap_DAPT_{gl}_dynamical.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_heatmap_DAPT_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_heatmap_DAPT_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_heatmap.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_markers_integrated_germlayer:
+    input:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_1.png',
+        'plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_2.png',
+        'plot/hpbase/integrated/scv_pl_velocity_markers_integrated_{gl}_dynamical_3.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_markers_integrated_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_velocity_markers_integrated_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_markers_cont_germlayer:
+    input:
+        'output/hpbase/cont/velocyto/cont_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_1.png',
+        'plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_2.png',
+        'plot/hpbase/cont/scv_pl_velocity_markers_cont_{gl}_dynamical_3.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_markers_cont_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_velocity_markers_cont_{gl}_dynamical.log'
+    shell:
+        'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'
+
+rule scv_pl_velocity_markers_DAPT_germlayer:
+    input:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_dynamical.h5ad'
+    output:
+        'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_1.png',
+        'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_2.png',
+        'plot/hpbase/DAPT/scv_pl_velocity_markers_DAPT_{gl}_dynamical_3.png'
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scv_pl_velocity_markers_DAPT_{gl}_dynamical.txt'
+    log:
+        'logs/scv_pl_velocity_markers_DAPT_{gl}_dynamical.log'
     shell:
         'src/scv_pl_velocity_markers.sh {input} {output} >& {log}'

@@ -8,7 +8,7 @@ min_version("6.5.3")
 
 SAMPLES = ['cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h']
 MODES = ['deterministic', 'stochastic', 'dynamical']
-
+GERM_LAYER = ['ectoderm', 'mesoderm', 'endoderm']
 rule all:
     input:
         expand('output/hpbase/cont/velocyto/cont_{mode}.h5ad',
@@ -16,7 +16,13 @@ rule all:
         expand('output/hpbase/DAPT/velocyto/DAPT_{mode}.h5ad',
             mode=MODES),
         expand('output/hpbase/integrated/velocyto/integrated_{mode}.h5ad',
-            mode=MODES)
+            mode=MODES),
+        expand('output/hpbase/cont/velocyto/cont_{gl}_{mode}.h5ad',
+            gl=GERM_LAYER, mode=MODES),
+        expand('output/hpbase/DAPT/velocyto/DAPT_{gl}_{mode}.h5ad',
+            gl=GERM_LAYER, mode=MODES),
+        expand('output/hpbase/integrated/velocyto/integrated_{gl}_{mode}.h5ad',
+            gl=GERM_LAYER, mode=MODES)
 
 #################################
 # Generate Loom files
@@ -101,7 +107,7 @@ rule aggr_loom_DAPT:
 #################################
 rule seurat2anndata_integrated:
     input:
-        'output/hpbase/integrated/seurat.RData'
+        'output/hpbase/integrated/seurat_annotated.RData'
     output:
         'output/hpbase/integrated/seurat.h5ad'
     container:
@@ -117,7 +123,7 @@ rule seurat2anndata_integrated:
 
 rule seurat2anndata_cont:
     input:
-        'output/hpbase/cont/seurat.RData'
+        'output/hpbase/cont/seurat_annotated.RData'
     output:
         'output/hpbase/cont/seurat.h5ad'
     container:
@@ -133,7 +139,7 @@ rule seurat2anndata_cont:
 
 rule seurat2anndata_DAPT:
     input:
-        'output/hpbase/DAPT/seurat.RData'
+        'output/hpbase/DAPT/seurat_annotated.RData'
     output:
         'output/hpbase/DAPT/seurat.h5ad'
     container:
@@ -156,6 +162,8 @@ rule scvelo_integrated:
         'output/hpbase/integrated/seurat.h5ad'
     output:
         'output/hpbase/integrated/velocyto/integrated_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -167,12 +175,34 @@ rule scvelo_integrated:
     shell:
         'src/scvelo.sh {wildcards.mode} {input} {output} >& {log}'
 
+rule scvelo_integrated_germlayer:
+    input:
+        'output/hpbase/aggr/velocyto/aggr.loom',
+        'output/hpbase/integrated/seurat.h5ad'
+    output:
+        'output/hpbase/integrated/velocyto/integrated_{gl}_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES]),
+        gl='|'.join([re.escape(x) for x in GERM_LAYER])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scvelo_integrated_{gl}_{mode}.txt'
+    log:
+        'logs/scvelo_integrated_{gl}_{mode}.log'
+    shell:
+        'src/scvelo_germlayer.sh {wildcards.gl} {wildcards.mode} {input} {output} >& {log}'
+
 rule scvelo_cont:
     input:
         'output/hpbase/aggr_cont/velocyto/aggr.loom',
         'output/hpbase/cont/seurat.h5ad'
     output:
         'output/hpbase/cont/velocyto/cont_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -190,6 +220,8 @@ rule scvelo_DAPT:
         'output/hpbase/DAPT/seurat.h5ad'
     output:
         'output/hpbase/DAPT/velocyto/DAPT_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES])
     container:
         'docker://koki/velocyto:20221005'
     resources:
@@ -200,3 +232,43 @@ rule scvelo_DAPT:
         'logs/scvelo_DAPT_{mode}.log'
     shell:
         'src/scvelo.sh {wildcards.mode} {input} {output} >& {log}'
+
+rule scvelo_cont_germlayer:
+    input:
+        'output/hpbase/aggr_cont/velocyto/aggr.loom',
+        'output/hpbase/cont/seurat.h5ad'
+    output:
+        'output/hpbase/cont/velocyto/cont_{gl}_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES]),
+        gl='|'.join([re.escape(x) for x in GERM_LAYER])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scvelo_cont_{gl}_{mode}.txt'
+    log:
+        'logs/scvelo_cont_{gl}_{mode}.log'
+    shell:
+        'src/scvelo_germlayer.sh {wildcards.gl} {wildcards.mode} {input} {output} >& {log}'
+
+rule scvelo_DAPT_germlayer:
+    input:
+        'output/hpbase/aggr_DAPT/velocyto/aggr.loom',
+        'output/hpbase/DAPT/seurat.h5ad'
+    output:
+        'output/hpbase/DAPT/velocyto/DAPT_{gl}_{mode}.h5ad'
+    wildcard_constraints:
+        mode='|'.join([re.escape(x) for x in MODES]),
+        gl='|'.join([re.escape(x) for x in GERM_LAYER])
+    container:
+        'docker://koki/velocyto:20221005'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/scvelo_DAPT_{gl}_{mode}.txt'
+    log:
+        'logs/scvelo_DAPT_{gl}_{mode}.log'
+    shell:
+        'src/scvelo_germlayer.sh {wildcards.gl} {wildcards.mode} {input} {output} >& {log}'

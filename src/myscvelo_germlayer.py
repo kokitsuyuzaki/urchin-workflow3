@@ -5,14 +5,26 @@ import scanpy
 import pandas as pd
 
 args = sys.argv
-mode = args[1]
-infile1 = args[2]
-infile2 = args[3]
-outfile = args[4]
+
+germlayer_query = args[1].capitalize()
+mode = args[2]
+infile1 = args[3]
+infile2 = args[4]
+outfile = args[5]
+# germlayer_query = "Ectoderm"
+# mode = "stochastic"
+# infile1 = 'output/hpbase/aggr/velocyto/aggr.loom'
+# infile2 = 'output/hpbase/integrated/seurat.h5ad'
 
 # Loading
 adata1 = scanpy.read(infile1)
 adata2 = scanpy.read_h5ad(infile2)
+
+# Filtering cells
+cell_idx = adata2.obs[adata2.obs['germlayer'] == germlayer_query].index
+cell_pos = [adata2.obs_names.get_loc(idx) for idx in cell_idx]
+adata1 = adata1[cell_pos].copy()
+adata2 = adata2[cell_pos].copy()
 
 # Assign PCA, UMAP, and cluster ID calculated by Seurat
 adata1.obs['clusters'] = pd.Categorical(adata2.obs['seurat_clusters'])
