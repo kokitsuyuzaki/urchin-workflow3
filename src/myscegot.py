@@ -4,6 +4,9 @@ import anndata
 from scegot import scEGOT
 import itertools
 import plotly.io as pio
+import pandas as pd
+import numpy as np
+import pickle
 
 args = sys.argv
 infile = args[1]
@@ -12,7 +15,7 @@ outfile = args[2]
 # Set consstants
 RANDOM_STATE = 2023
 PCA_N_COMPONENTS = 30
-GMM_CLUSTER_NUMBERS = [10, 10, 10, 10, 10]
+GMM_CLUSTER_NUMBERS = [3, 3, 3, 3, 3]
 UMAP_N_NEIGHBORS = 1000
 DAY_NAMES = ["24h", "36h", "48h", "72h", "96h"]
 
@@ -61,7 +64,7 @@ X_umap, umap_model = scegot.apply_umap(
 
 # Cell State Graph
 cluster_names = scegot.generate_cluster_names_with_day()
-G = scegot.make_cell_state_graph(
+G_pca = scegot.make_cell_state_graph(
     cluster_names,
     mode="pca",
     threshold=0.2,
@@ -73,91 +76,8 @@ G_umap = scegot.make_cell_state_graph(
     threshold=0.2,
 )
 
-# Plot
-scegot.plot_gmm_predictions(
-    mode="pca",
-    plot_gmm_means=True,
-    figure_titles_without_gmm=[f"{name} on PCA" for name in DAY_NAMES],
-    figure_titles_with_gmm=[f"{name} with GMM" for name in DAY_NAMES],
-    cmap="plasma",
-    save=True,
-    save_paths=[f"./gmm_preds_pca_{day_name}.png" for day_name in DAY_NAMES]
-)
-
-scegot.plot_gmm_predictions(
-    mode="umap",
-    plot_gmm_means=True,
-    figure_titles_without_gmm=[f"{name} on UMAP" for name in DAY_NAMES],
-    figure_titles_with_gmm=[f"{name} with GMM" for name in DAY_NAMES],
-    cmap="plasma",
-    save=True,
-    save_paths=[f"./gmm_preds_umap_{day_name}.png" for day_name in DAY_NAMES]
-)
-
-scegot.animatie_interpolated_distribution(
-    cmap="gnuplot2",
-    interpolate_interval=11,
-    save=True,
-    save_path="./cell_state_video.gif",
-)
-
-scegot.plot_simple_cell_state_graph(
-    G_umap,
-    layout="normal",
-    save=True,
-    save_path="./simple_cell_state_graph_umap.png"
-)
-
-scegot.plot_simple_cell_state_graph(
-    G,
-    layout="hierarchy",
-    order="weight",
-    save=True,
-    save_path="./simple_cell_state_graph_hierarchy.png"
-)
-
-scegot.plot_true_and_interpolation_distributions(
-    interpolate_index=2,
-    mode="pca",
-    n_samples=1000,
-    t=0.5,
-    plot_source_and_target=True,
-    alpha_true=0.5,
-    save=True,
-    save_path="./true_and_interpolation_distributions_pca.png"
-)
-
-scegot.plot_true_and_interpolation_distributions(
-    interpolate_index=2,
-    mode="umap",
-    n_samples=1000,
-    t=0.5,
-    plot_source_and_target=True,
-    alpha_true=0.5,
-    save=True,
-    save_path="./true_and_interpolation_distributions_umap.png"
-)
-
 # Velocity
 velocities = scegot.calculate_cell_velocities()
-scegot.plot_cell_velocity(
-    velocities,
-    mode="pca",
-    color_points="gmm",
-    cluster_names=list(itertools.chain.from_iterable(cluster_names)),
-    cmap="tab20",
-    save=True,
-    save_path="./cell_velocity_pca.png"
-)
-
-scegot.plot_cell_velocity(
-    velocities,
-    mode="umap",
-    color_points="day",
-    cmap="plasma",
-    save=True,
-    save_path="./cell_velocity_umap.png"
-)
 
 # Waddington Potential
 Wpotential, F_all = scegot.calculate_waddington_potential(
@@ -165,32 +85,31 @@ Wpotential, F_all = scegot.calculate_waddington_potential(
     knn_other_params={},
 )
 
-scegot.plot_waddington_potential(
-    Wpotential,
-    mode="pca",
-    gene_name=None,
-    save=True,
-    save_path="./waddington_potential_pca_potential.html"
-)
+# クラスタ番号と細胞型をDataFrameとしてまとめる
+df = pd.DataFrame({
+    "cluster": np.concatenate(scegot.gmm_labels),
+    "celltype": input_data.obs["celltype"].values
+})
 
-scegot.plot_waddington_potential(
-    Wpotential,
-    mode="umap",
-    gene_name=None,
-    save=True,
-    save_path="./waddington_potential_umap_potential.html"
-)
+# Output
+bundle = {
+    "input_data": input_data,
+    "scegot": scegot,
+    "X": X,
+    "pca_model": pca_model,
+    "gmm_models": gmm_models,
+    "gmm_labels": gmm_labels,
+    "X_umap": X_umap,
+    "umap_model": umap_model,
+    "cluster_names": cluster_names,
+    "G_pca": G_pca,
+    "G_umap": G_umap,
+    "velocities": velocities,
+    "Wpotential": Wpotential,
+    "F_all": F_all,
+    "df": df
+}
 
-scegot.plot_waddington_potential_surface(
-    Wpotential,
-    mode="pca",
-    save=True,
-    save_path="./waddington_potential_surface_pca.html"
-)
-
-scegot.plot_waddington_potential_surface(
-    Wpotential,
-    mode="umap",
-    save=True,
-    save_path="./waddington_potential_surface_umap.html"
-)
+# 書き出し（バイナリモード）
+with open(outfile, "wb") as f:
+    pickle.dump(bundle, f)
