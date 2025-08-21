@@ -54,7 +54,7 @@ markers <- c("Hp-Hnf6", "Hp-Chordin", "Hp-Hox7", "Hp-FoxJ1", "Hp-Bra", "Hp-Delta
 
 fig2_markers <- c("Hp-SoxC", "Hp-Hnf6", "Hp-FoxJ1", "Hp-Chordin", "Hp-Ephrin", "Hp-Hox7", "Hp-Gcm", "Hp-Echn38", "Hp-FoxY", "Hp-Erg", "Hp-Ese", "Hp-Sm50", "Hp-Alx1", "Hp-Endo16", "Hp-Blimp1", "Hp-Bra", "Hp-IrxA", "Hp-Pnlip-5")
 
-fig4_markers <- c("Hp-Gad", "Hp-Hdc-3", "Hp-Th", "Hp-Chat", "Hp-Ddc", "Hp-Tph", "Hp-Syt1-1-like", "Hp-Otp", "Hp-Ngn", "Hp-Ac/Sc", "Hp-Awh", "Hp-Delta", "Hp-SoxC", "Hp-Smad-ip", "Hp-Rx", "Hp-Hbn", "Hp-Nkx2.1", "Hp-Six3", "Hp-FoxQ2-1-like", "Hp-FoxQ2-1", "Hp-HesC", "Hp-Soxb1")
+fig3_markers <- c("Hp-Gad", "Hp-Hdc-3", "Hp-Th", "Hp-Chat", "Hp-Ddc", "Hp-Tph", "Hp-Syt1-1-like", "Hp-Otp", "Hp-Ngn", "Hp-Ac/Sc", "Hp-Awh", "Hp-Delta", "Hp-SoxC", "Hp-Smad-ip", "Hp-Rx", "Hp-Hbn", "Hp-Nkx2.1", "Hp-Six3", "Hp-FoxQ2-1-like", "Hp-FoxQ2-1", "Hp-HesC", "Hp-Soxb1")
 
 fig2_celltypes <- c("uncharacterized", "Pancreas", "Anus", "Endoderm", "Stomach_Intestine", "Intestine", "Stomach", "Skeleton", "Non_skeleton_mesoderm", "Blastocoelar_cell", "Germ_line_future", "Pigment", "Aboral_ectoderm", "Oral_ectoderm", "Ciliary_band", "Neurons")
 

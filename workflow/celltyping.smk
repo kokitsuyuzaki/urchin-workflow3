@@ -19,12 +19,20 @@ container: 'docker://koki/urchin_workflow_seurat:20230616'
 
 rule all:
     input:
+        # DEG
+        'output/hpbase/integrated/allmarkers_annotated.xlsx',
+        'output/hpbase/integrated/conservedmarkers_annotated.xlsx',
+        'output/hpbase/integrated/allmarkers_annotated_neurons.xlsx',
+        'output/hpbase/integrated/conservedmarkers_annotated_neurons.xlsx',
+        'output/hpbase/integrated/allmarkers_annotated_neurons_reclustering.xlsx',
+        'output/hpbase/integrated/conservedmarkers_annotated_neurons_reclustering.xlsx',
         # Label transfer
         expand('output/hpbase/{sample}/seurat_annotated_lt.RData',
             sample=SAMPLES),
         # Kana
         'output/hpbase/integrated/kana/integrated.rds',
         'output/hpbase/integrated/kana/neurons.rds',
+        'output/hpbase/integrated/kana/neurons_reclustering.rds',
         expand('output/hpbase/integrated/kana/cluster{cl}.rds',
             cl=CLUSTERS),
         expand('output/hpbase/integrated/kana/neurons_cluster{ncl}.rds',
@@ -51,6 +59,8 @@ rule all:
         'plot/hpbase/integrated/dimplot_germlayer.png',
         'plot/hpbase/integrated/dimplot_neurons.png',
         'plot/hpbase/integrated/dimplot_neurons_splitby.png',
+        'plot/hpbase/integrated/dimplot_neurons_reclustering.png',
+        'plot/hpbase/integrated/dimplot_neurons_reclustering_splitby.png',
         'plot/hpbase/integrated/dimplot_cluster11.png',
         'plot/hpbase/integrated/dimplot_cluster11_splitby.png',
         # Dotplot
@@ -80,6 +90,34 @@ rule label_integrated:
     shell:
         'src/label_integrated.sh {input} {output} >& {log}'
 
+rule seurat_findallmarkers_integrated_annotated:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/allmarkers_annotated.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findallmarkers_integrated_annotated.txt'
+    log:
+        'logs/seurat_findallmarkers_integrated_annotated.log'
+    shell:
+        'src/seurat_findallmarkers_annotated.sh {input} {output} >& {log}'
+
+rule seurat_findconservedmarkers_integrated_annotated:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/conservedmarkers_annotated.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findconservedmarkers_integrated_annotated.txt'
+    log:
+        'logs/seurat_findconservedmarkers_integrated_annotated.log'
+    shell:
+        'src/seurat_findconservedmarkers_annotated.sh {input} {output} >& {log}'
+
 # Stratification
 rule label_integrated_neurons:
     input:
@@ -95,9 +133,79 @@ rule label_integrated_neurons:
     shell:
         'src/label_integrated_neurons.sh {input} {output} >& {log}'
 
-rule label_integrated_neurons_clusters:
+rule seurat_findallmarkers_integrated_annotated_neurons:
     input:
         'output/hpbase/integrated/seurat_annotated_neurons.RData'
+    output:
+        'output/hpbase/integrated/allmarkers_annotated_neurons.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findallmarkers_integrated_annotated_neurons.txt'
+    log:
+        'logs/seurat_findallmarkers_integrated_annotated_neurons.log'
+    shell:
+        'src/seurat_findallmarkers_annotated_cluster.sh {input} {output} >& {log}'
+
+rule seurat_findconservedmarkers_integrated_annotated_neurons:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons.RData'
+    output:
+        'output/hpbase/integrated/conservedmarkers_annotated_neurons.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findconservedmarkers_integrated_annotated_neurons.txt'
+    log:
+        'logs/seurat_findconservedmarkers_integrated_annotated_neurons.log'
+    shell:
+        'src/seurat_findconservedmarkers_annotated_cluster.sh {input} {output} >& {log}'
+
+rule label_integrated_neurons_reclustering:
+    input:
+        'output/hpbase/integrated/seurat_annotated.RData'
+    output:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/label_integrated_hpbase_integrated_neurons_reclustering.txt'
+    log:
+        'logs/label_integrated_hpbase_integrated_neurons_reclustering.log'
+    shell:
+        'src/label_integrated_neurons_reclustering.sh {input} {output} >& {log}'
+
+rule seurat_findallmarkers_integrated_annotated_neurons_reclustering:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
+    output:
+        'output/hpbase/integrated/allmarkers_annotated_neurons_reclustering.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findallmarkers_integrated_annotated_neurons_reclustering.txt'
+    log:
+        'logs/seurat_findallmarkers_integrated_annotated_neurons_reclustering.log'
+    shell:
+        'src/seurat_findallmarkers_annotated_cluster.sh {input} {output} >& {log}'
+
+rule seurat_findconservedmarkers_integrated_annotated_neurons_reclustering:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
+    output:
+        'output/hpbase/integrated/conservedmarkers_annotated_neurons_reclustering.xlsx'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/seurat_findconservedmarkers_integrated_annotated_neurons_reclustering.txt'
+    log:
+        'logs/seurat_findconservedmarkers_integrated_annotated_neurons_reclustering.log'
+    shell:
+        'src/seurat_findconservedmarkers_annotated_cluster.sh {input} {output} >& {log}'
+
+rule label_integrated_neurons_clusters:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
     output:
         'output/hpbase/integrated/seurat_annotated_neurons_cluster{ncl}.RData'
     resources:
@@ -190,6 +298,20 @@ rule kana_integrated_neurons:
         'benchmarks/kana_integrated_neurons.txt'
     log:
         'logs/kana_integrated_neurons.log'
+    shell:
+        'src/kana_integrated.sh {input} {output} >& {log}'
+
+rule kana_integrated_neurons_reclustering:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
+    output:
+        'output/hpbase/integrated/kana/neurons_reclustering.rds'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/kana_integrated_neurons_reclustering.txt'
+    log:
+        'logs/kana_integrated_neurons_reclustering.log'
     shell:
         'src/kana_integrated.sh {input} {output} >& {log}'
 
@@ -412,6 +534,21 @@ rule dimplot_cluster11_integrated:
     shell:
         'src/dimplot_cluster11_integrated.sh {input} {output} >& {log}'
 
+rule dimplot_neurons_reclustering_integrated:
+    input:
+        'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
+    output:
+        'plot/hpbase/integrated/dimplot_neurons_reclustering.png',
+        'plot/hpbase/integrated/dimplot_neurons_reclustering_splitby.png'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/dimplot_neurons_reclustering_integrated_hpbase_integrated.txt'
+    log:
+        'logs/dimplot_neurons_reclustering_integrated_hpbase_integrated.log'
+    shell:
+        'src/dimplot_neurons_integrated.sh {input} {output} >& {log}'
+
 #################################
 # Dotplot
 #################################
@@ -451,7 +588,7 @@ rule dotplot_celltype_integrated:
 #################################
 # Heatmap
 #################################
-# Figure 4
+# Figure 3
 rule heatmap_celltype_integrated:
     input:
         'output/hpbase/integrated/seurat_annotated.RData'
