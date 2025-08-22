@@ -1,5 +1,5 @@
 # urchin-workflow3
-This workflow consists of 12 workflows as follows:
+This workflow consists of 14 workflows as follows:
 
 - **workflow/download.smk**: Data downloading
 
@@ -53,6 +53,10 @@ This workflow consists of 12 workflows as follows:
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/landscaper.png?raw=true)
 
+- **workflow/signal_noise.smk**: Supervised Learning and Guided PCA
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/signal_noise.png?raw=true)
+
 ## Requirements
 - Bash: GNU bash, version 4.2.46(1)-release (x86_64-redhat-linux-gnu)
 - Snakemake: 6.5.3
@@ -75,6 +79,7 @@ snakemake -s workflow/report.smk -j 4 --use-singularity
 snakemake -s workflow/celltyping.smk -j 4 --use-singularity
 snakemake -s workflow/template_matching.smk -j 4 --use-singularity
 snakemake -s workflow/landscaper.smk -j 4 --use-singularity
+snakemake -s workflow/signalnoise.smk -j 4 --use-singularity
 ```
 
 ### In Open Grid Engine
@@ -93,6 +98,7 @@ snakemake -s workflow/report.smk -j 32 --cluster qsub --latency-wait 600 --use-s
 snakemake -s workflow/celltyping.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/template_matching.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/landscaper.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
+snakemake -s workflow/signalnoise.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 ```
 
 ### In Slurm
@@ -111,6 +117,7 @@ snakemake -s workflow/report.smk -j 32 --cluster sbatch --latency-wait 600 --use
 snakemake -s workflow/celltyping.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/template_matching.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/landscaper.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
+snakemake -s workflow/signalnoise.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 ```
 
 ## License

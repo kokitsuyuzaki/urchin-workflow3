@@ -12,4 +12,5 @@ snakemake -s workflow/report.smk --rulegraph | dot -Tpng > plot/report.png
 snakemake -s workflow/celltyping.smk --rulegraph | dot -Tpng > plot/celltyping.png
 snakemake -s workflow/template_matching.smk --rulegraph | dot -Tpng > plot/template_matching.png
 snakemake -s workflow/landscaper.smk --rulegraph | dot -Tpng > plot/landscaper.png
+snakemake -s workflow/signalnoise.smk --rulegraph | dot -Tpng > plot/signalnoise.png
 
