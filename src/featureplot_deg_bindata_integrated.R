@@ -9,6 +9,9 @@ outfile <- commandArgs(trailingOnly=TRUE)[3]
 load(infile1)
 numSheets <- length(excel_sheets(infile2))
 
+## Only Ectoderm
+seurat.integrated <- seurat.integrated[, which(seurat.integrated@meta.data$germlayer == "Ectoderm")]
+
 # Preprocessing
 seuratList <- .stratifySeurat(seurat.integrated, group_names)
 dir.create(gsub("FINISH", "", outfile))

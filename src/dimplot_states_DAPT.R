@@ -7,7 +7,12 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 # Loading
 all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-load('output/hpbase/DAPT_stratified/seurat.RData')
+load('output/hpbase/DAPT_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 # Sort
 names(all_states_DAPT) <- NULL
@@ -19,6 +24,7 @@ target_DAPT <- sapply(bin_data_DAPT, function(x){
 })
 
 # Assign Labels
+names(target_DAPT) <- colnames(seurat.integrated)
 seurat.integrated$states <- target_DAPT
 
 # Plot

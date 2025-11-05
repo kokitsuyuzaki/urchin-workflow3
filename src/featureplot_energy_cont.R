@@ -12,7 +12,12 @@ outfile6 <- commandArgs(trailingOnly=TRUE)[6]
 all_states_cont <- unlist(read.delim('plot/hpbase/cont/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
 energy_cont <- unlist(read.table('plot/hpbase/cont/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/cont_stratified/seurat.RData')
+load('output/hpbase/cont_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 # Sort
 names(all_states_cont) <- NULL

@@ -7,7 +7,12 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 # Loading
 all_states_cont <- unlist(read.delim('plot/hpbase/cont/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-load('output/hpbase/cont_stratified/seurat.RData')
+load('output/hpbase/cont_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 # Sort
 names(all_states_cont) <- NULL
@@ -19,6 +24,7 @@ target_cont <- sapply(bin_data_cont, function(x){
 })
 
 # Assign Labels
+names(target_cont) <- colnames(seurat.integrated)
 seurat.integrated$states <- target_cont
 
 # Plot
@@ -32,3 +38,4 @@ g <- DimPlot(seurat.integrated, reduction = "umap", group.by="states", split.by=
 png(file=outfile2, width=2400, height=600)
 print(g)
 dev.off()
+

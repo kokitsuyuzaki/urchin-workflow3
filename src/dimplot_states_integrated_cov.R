@@ -7,7 +7,12 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 # Loading
 all_states_integrated <- unlist(read.delim('plot/hpbase/integrated_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-load('output/hpbase/integrated/seurat.RData')
+load('output/hpbase/integrated/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 # Sort
 names(all_states_integrated) <- NULL
@@ -22,6 +27,7 @@ target_integrated <- sapply(bin_data_integrated, function(x){
 })
 
 # Assign Labels
+names(target_integrated) <- colnames(seurat.integrated)
 seurat.integrated$states <- target_integrated
 
 # Plot

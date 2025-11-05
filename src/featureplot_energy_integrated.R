@@ -9,10 +9,19 @@ outfile5 <- commandArgs(trailingOnly=TRUE)[5]
 outfile6 <- commandArgs(trailingOnly=TRUE)[6]
 
 ####################### DAPT Step ####################
-all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-energy_DAPT <- unlist(read.table('plot/hpbase/DAPT/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/DAPT_stratified/seurat.RData')
+all_states_DAPT <- unlist(read.delim('plot/hpbase/integrated/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+bin_data_DAPT <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+energy_DAPT <- unlist(read.table('plot/hpbase/integrated/Landscaper/E.tsv', header=FALSE))
+load('output/hpbase/DAPT_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+target <- intersect(target1, target2)
+seurat.integrated <- seurat.integrated[, target]
+
+bin_data_DAPT <- gsub("\t", " ", bin_data_DAPT)
+bin_data_DAPT <- bin_data_DAPT[target]
 
 # Sort
 names(all_states_DAPT) <- NULL
@@ -27,11 +36,20 @@ energy_DAPT_sorted <- as.matrix(energy_DAPT_sorted)
 rownames(energy_DAPT_sorted) <- colnames(seurat.integrated)
 ######################################################
 
-####################### Cont Step ####################
-all_states_cont <- unlist(read.delim('plot/hpbase/cont/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_cont <- unlist(read.delim('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
-energy_cont <- unlist(read.table('plot/hpbase/cont/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/cont_stratified/seurat.RData')
+####################### cont Step ####################
+all_states_cont <- unlist(read.delim('plot/hpbase/integrated/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
+bin_data_cont <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+energy_cont <- unlist(read.table('plot/hpbase/integrated/Landscaper/E.tsv', header=FALSE))
+load('output/hpbase/cont_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+target <- intersect(target1, target2)
+seurat.integrated <- seurat.integrated[, target]
+
+bin_data_cont <- gsub("\t", " ", bin_data_cont)
+bin_data_cont <- bin_data_cont[target]
 
 # Sort
 names(all_states_cont) <- NULL
@@ -46,21 +64,27 @@ energy_cont_sorted <- as.matrix(energy_cont_sorted)
 rownames(energy_cont_sorted) <- colnames(seurat.integrated)
 ######################################################
 
-####################### Integrated ###################
+####################### integrated Step ####################
 all_states_integrated <- unlist(read.delim('plot/hpbase/integrated/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
 bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
 energy_integrated <- unlist(read.table('plot/hpbase/integrated/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/integrated/seurat.RData')
+load('output/hpbase/integrated/seurat_annotated.RData')
 
-# rm \t
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+target <- intersect(target1, target2)
+seurat.integrated <- seurat.integrated[, target]
+
 bin_data_integrated <- gsub("\t", " ", bin_data_integrated)
+bin_data_integrated <- bin_data_integrated[target]
 
 # Sort
 names(all_states_integrated) <- NULL
 names(bin_data_integrated) <- NULL
 
 target_integrated <- sapply(bin_data_integrated, function(x){
-     which(all_states_integrated == x)
+     which(all_states_integrated == x)[1]
 })
 
 energy_integrated_sorted <- energy_integrated[target_integrated]
@@ -87,7 +111,7 @@ colData(sce)$energy <- seurat.integrated$energy
 colData(sce)$cont_DAPT_energy <- seurat.integrated$cont_DAPT_energy
 
 # Setting Hex bin
-sce <- make_hexbin(sce, nbins = 50, dimension_reduction = "UMAP")
+sce <- make_hexbin(sce, nbins = 30, dimension_reduction = "UMAP")
 save(sce, file=outfile1)
 
 # Plot
@@ -108,5 +132,5 @@ ggsave(file=outfile5, g, dpi=200, width=6, height=6)
 
 # Plot
 seuratList <- .stratifySeurat(seurat.integrated, group_names)
-g <- .panelPlot(seuratList, group_names, "energy")
+g <- .panelPlotMeta(seuratList, group_names, "energy")
 ggsave(file=outfile6, g, dpi=200, width=30, height=15)

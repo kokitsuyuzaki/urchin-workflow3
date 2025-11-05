@@ -5,7 +5,12 @@ outfile <- commandArgs(trailingOnly=TRUE)[1]
 
 # Loading
 bindata_DAPT <- read.table('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE)
-load('output/hpbase/DAPT_stratified/seurat.RData')
+load('output/hpbase/DAPT_stratified/seurat_annotated.RData')
+
+## Only Ectoderm in 24h, 36h, 48h samples
+target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
+target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
+seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 # Assign Labels
 for(i in seq_len(ncol(bindata_DAPT))){

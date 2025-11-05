@@ -29,6 +29,8 @@ target_dapt <- sapply(bin_data_dapt, function(x){
 })
 
 # Assign Labels
+names(target_cont) <- colnames(seurat.cont)
+names(target_dapt) <- colnames(seurat.dapt)
 seurat.cont$states <- target_cont
 seurat.dapt$states <- target_dapt
 
