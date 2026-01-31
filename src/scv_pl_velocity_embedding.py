@@ -17,4 +17,15 @@ scv.set_figure_params('scvelo')  # for beautified visualization
 adata = scv.read(infile)
 
 # Embedding
-scv.pl.velocity_embedding(adata, basis='umap', save=outfile, dpi=500, figsize=(10,10))
+scv.pl.velocity_embedding_stream(
+    adata, 
+    basis='umap', 
+    save=outfile, 
+    dpi=500, 
+    figsize=(10,10),
+    color='clusters',       # ← celltypeで色分け
+    linewidth=2.5,
+    size=80,
+    alpha=0.8,
+    density=1.5
+)

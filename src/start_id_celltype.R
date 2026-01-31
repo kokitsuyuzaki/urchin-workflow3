@@ -3,14 +3,14 @@ source("src/Functions3.R")
 # Parameter
 infile <- commandArgs(trailingOnly=TRUE)[1]
 outfile <- commandArgs(trailingOnly=TRUE)[2]
-# infile = "output/hpbase/integrated/seurat_annotated.RData"
+# infile = 'output/hpbase/DAPT/seurat_annotated_landscaper.RData'
 
 # Loading
 load(infile)
 
 # Preprocess
 mat <- seurat.integrated[["SCT"]]@data
-target <- grep("24h", seurat.integrated@meta.data$sample)
+target <- grep("36h", seurat.integrated@meta.data$sample)
 mat <- mat[, target]
 celltype <- seurat.integrated@meta.data$celltype[target]
 

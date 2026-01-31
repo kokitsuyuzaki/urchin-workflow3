@@ -8,16 +8,26 @@
 #SBATCH --nice=50
 #SBATCH --requeue
 #SBATCH -p node03-06
+#SBATCH --mem=32G
 SLURM_RESTART_COUNT=2
 
-SAMPLE="output/hpbase/"$1
-GTF="data/hpbase/HpulGenome_v1_geneid.gtf"
+BAMDIR="output/hpbase/$1/outs"
+INFILE="${BAMDIR}/possorted_genome_bam.bam"
+OUTFILE="${BAMDIR}/cellsorted_possorted_genome_bam.bam"  # この名前が重要！
 
-samtools --version
-INFILE="output/hpbase/"$1"/outs/possorted_genome_bam.bam"
-OUTFILE="output/hpbase/"$1"/outs/cellsorted_possorted_genome_bam.bam"
-if [ ! -e $OUTFILE ]; then
-	samtools sort -t CB -O BAM -o $OUTFILE $INFILE
+# 壊れてる/未完なら作り直す
+if [ -e "$OUTFILE" ]; then
+  samtools quickcheck -q "$OUTFILE"
+  if [ $? -ne 0 ]; then
+    echo "[WARN] $OUTFILE is broken. Rebuilding..."
+    rm -f "$OUTFILE"
+  fi
 fi
 
-velocyto run10x $SAMPLE $GTF
+# 無いなら作る
+if [ ! -e "$OUTFILE" ]; then
+  samtools sort -t CB -O BAM -@ 4 -m 4G -o "$OUTFILE" "$INFILE"
+fi
+
+# ソート済みファイルが存在すればvelocytoはそれを使う
+velocyto run10x "output/hpbase/$1" "data/hpbase/HpulGenome_v1_geneid.gtf"

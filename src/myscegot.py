@@ -15,9 +15,9 @@ outfile = args[2]
 # Set consstants
 RANDOM_STATE = 2023
 PCA_N_COMPONENTS = 30
-GMM_CLUSTER_NUMBERS = [3, 3, 3, 3, 3]
+GMM_CLUSTER_NUMBERS = [6, 6, 6, 6]  # for each day
 UMAP_N_NEIGHBORS = 1000
-DAY_NAMES = ["24h", "36h", "48h", "72h", "96h"]
+DAY_NAMES = ["36h", "48h", "72h", "96h"]
 
 # Loading
 input_data = anndata.read_h5ad(infile)

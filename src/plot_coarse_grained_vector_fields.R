@@ -37,11 +37,6 @@ umap <- Embeddings(seurat.integrated, "umap")[, 1:2, drop = FALSE]
 
 load(infile2)
 
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
-
 meta <- meta[colnames(seurat.integrated), ]
 umap <- umap[colnames(seurat.integrated), ]
 

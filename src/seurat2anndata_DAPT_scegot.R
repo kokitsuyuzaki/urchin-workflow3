@@ -2,9 +2,7 @@ source("src/Functions2.R")
 
 # Parameter
 infile <- commandArgs(trailingOnly=TRUE)[1]
-outfile1 <- commandArgs(trailingOnly=TRUE)[2]
-outfile2 <- commandArgs(trailingOnly=TRUE)[3]
-outfile3 <- commandArgs(trailingOnly=TRUE)[4]
+outfile <- commandArgs(trailingOnly=TRUE)[2]
 
 # Loading
 load(infile)
@@ -20,21 +18,12 @@ seurat.integrated$cluster_day <- gsub("^DAPT-", "", seurat.integrated$sample)
 DefaultAssay(seurat.integrated) <- "RNA"
 seurat.integrated[["RNA"]]@data <- seurat.integrated[["RNA"]]@counts
 
-# germlayerごとに分割して出力
-layers <- c("Ectoderm", "Mesoderm", "Endoderm")
-outfiles <- c(outfile1, outfile2, outfile3)
-for (i in 1:3) {
-    # Setting
-    layer <- layers[i]
-    outfile <- outfiles[i]
+# Stratification
+seurat.sub <- subset(seurat.integrated, germlayer == "Ectoderm")
 
-    # Stratification
-    seurat.sub <- subset(seurat.integrated, germlayer == layer)
-    
-    # 一時ファイル名の生成
-    outfile2 <- gsub(".h5ad$", ".h5Seurat", outfile)
-    
-    unlink(outfile2)
-    SaveH5Seurat(seurat.sub, filename = outfile2)
-    Convert(outfile2, dest = "h5ad", overwrite = TRUE)
-}
+# 一時ファイル名の生成
+outfile2 <- gsub(".h5ad$", ".h5Seurat", outfile)
+
+unlink(outfile2)
+SaveH5Seurat(seurat.sub, filename = outfile2)
+Convert(outfile2, dest = "h5ad", overwrite = TRUE)

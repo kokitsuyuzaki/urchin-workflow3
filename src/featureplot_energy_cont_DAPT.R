@@ -37,14 +37,18 @@ median_wide <- df %>%
 # ===== 3. 六角形の位置情報と結合 =====
 hex_diff <- merge(median_wide, hex_positions, by = "hexID", all = FALSE)
 
-# ===== 4. 各プロットの作成 =====
+# ===== 4. 各プロットの作成（クリーンなスタイル） =====
 
 # プロットA：Group A の中央値プロット
 p1 <- ggplot(hex_diff, aes(x = x, y = y, fill = cont)) +
   geom_hex(stat = "identity", na.rm = TRUE) +
   scale_fill_viridis_c() +
   coord_fixed() +
-  theme_minimal() +
+  theme_void() +  # 全ての要素を削除
+  theme(plot.background = element_rect(fill = "white", color = NA),  # 背景を白に
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.position = "right",  # 凡例は保持
+        plot.title = element_text(hjust = 0.5, size = 14)) +  # タイトルを中央に
   labs(title = "Control Energy (Median)", fill = "cont")
 
 # プロットB：Group B の中央値プロット
@@ -52,7 +56,11 @@ p2 <- ggplot(hex_diff, aes(x = x, y = y, fill = DAPT)) +
   geom_hex(stat = "identity", na.rm = TRUE) +
   scale_fill_viridis_c() +
   coord_fixed() +
-  theme_minimal() +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.position = "right",
+        plot.title = element_text(hjust = 0.5, size = 14)) +
   labs(title = "DAPT Energy (Median)", fill = "DAPT")
 
 # プロットDiff：差分プロット（B – A）
@@ -60,7 +68,11 @@ p3 <- ggplot(hex_diff, aes(x = x, y = y, fill = diff)) +
   geom_hex(stat = "identity", na.rm = TRUE) +
   scale_fill_gradient2(low = "blue", mid = "gray80", high = "red", midpoint = 0) +
   coord_fixed() +
-  theme_minimal() +
+  theme_void() +
+  theme(plot.background = element_rect(fill = "white", color = NA),
+        panel.background = element_rect(fill = "white", color = NA),
+        legend.position = "right",
+        plot.title = element_text(hjust = 0.5, size = 14)) +
   labs(title = "Diff (DAPT - cont)", fill = "DAPT - cont")
 
 # ===== 5. 3つのプロットを横並びに表示 =====

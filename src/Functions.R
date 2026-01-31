@@ -21,6 +21,7 @@ library("dplyr")
 library("tibble")
 library("magrittr")
 library("ggplot2")
+library("ggforce")
 library("gridExtra")
 library("viridis")
 library("reshape2")
@@ -36,6 +37,52 @@ library("Matrix")
 library("igraph")
 library("dendextend")
 library("Rcpp")
+library("pheatmap")
+
+# 1) 行列P（行 stochastic）と吸収状態のインデックスから Q, R を切り出し
+build_QR <- function(P, absorbing) {
+  stopifnot(nrow(P) == ncol(P))
+  n <- nrow(P); absorbing <- sort(unique(absorbing))
+  transient <- setdiff(seq_len(n), absorbing)
+  if (length(transient) == 0) stop("Transient states are empty.")
+  Q <- P[transient, transient, drop = FALSE]
+  R <- P[transient, absorbing, drop = FALSE]
+  list(Q = as(Q, "dgCMatrix"), R = as(R, "dgCMatrix"),
+       transient = transient, absorbing = absorbing)
+}
+
+# 2) 吸収確率 F を計算（F_{ij}: transient i → absorbing j）
+#    逆行列は使わず (I - Q) X = R を解く
+absorption_probabilities <- function(P, absorbing, reg = 0) {
+  # 事前に行正規化（数値誤差対策）
+  P <- as(P, "dgCMatrix")
+  rs <- rowSums(P)
+  if (any(rs == 0)) stop("Some rows of P sum to 0.")
+  P <- Diagonal(x = 1/rs) %*% P
+
+  qr <- build_QR(P, absorbing)
+  Q <- qr$Q; R <- qr$R
+  m <- nrow(Q)
+  IminusQ <- Diagonal(m) - Q
+  if (reg > 0) IminusQ <- IminusQ + Diagonal(m, x = reg)  # 退避的レギュラリゼーション
+
+  # (I - Q) * F = R を各列について解く
+  F <- solve(IminusQ, R, sparse = TRUE)
+  # F は transient×absorbing。各行は吸収確率分布（和=1になるのが理想）
+  list(F = F, transient = qr$transient, absorbing = qr$absorbing)
+}
+
+# 3) （任意）可塑性: エントロピー H_i = -∑_j F_ij log F_ij
+fate_entropy <- function(F, base = exp(1)) {
+  F <- as.matrix(F)
+  F[F <= 0] <- 0
+  rowSums(ifelse(F > 0, -F * (log(F) / log(base)), 0))
+}
+
+# 4) （任意）最大確率の運命割当（argmax）
+fate_argmax <- function(F) {
+  max.col(as.matrix(F), ties.method = "first")
+}
 
 make_vector_grid <- function(df, umap, nx = 80, ny = 80) {
   if (nrow(df) == 0) return(data.frame())
@@ -85,14 +132,14 @@ base_plot <- function(umap, mode = "none", meta = NULL, E = NULL,
       stop("meta に 'germlayer' 列がありません。")
     df$grp <- factor(meta$germlayer, levels = c("Ectoderm","Endoderm","Mesoderm","NA"))
     pal <- germlayer_cols; names(pal)[names(pal)=="NA_"] <- "NA"
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.2, alpha = 0.7) +
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
       scale_color_manual(values = pal, name = NULL)
 
   } else if (mode == "cluster") {
     stopifnot(!is.null(meta))
     grp <- if ("seurat_clusters" %in% colnames(meta)) meta$seurat_clusters else Seurat::Idents(seurat.integrated)
     df$grp <- factor(as.character(grp))
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.2, alpha = 0.7) +
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
       scale_color_manual(values = default_disc(nlevels(df$grp)), name = "cluster")
 
   } else if (mode == "sample") {
@@ -104,21 +151,36 @@ base_plot <- function(umap, mode = "none", meta = NULL, E = NULL,
     } else {
       stop("meta に 'sample' または ('condition','time') がありません。")
     }
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.2, alpha = 0.7) +
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
       scale_color_manual(values = default_disc(nlevels(df$grp)), name = "sample")
 
-  } else if (mode == "celltype") {
+} else if (mode == "celltype") {
     if (is.null(meta) || !("celltype" %in% colnames(meta)))
       stop("meta に 'celltype' 列がありません。")
+    
     df$grp <- factor(meta$celltype)
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.2, alpha = 0.7) +
-      scale_color_manual(values = default_disc(nlevels(df$grp)), name = "celltype")
+    
+    # celltype_colorsが存在する場合、それを使用
+    if ("celltype_colors" %in% colnames(meta)) {
+      # ユニークなcelltypeと対応する色を取得
+      celltype_color_map <- setNames(
+        meta$celltype_colors[!duplicated(meta$celltype)],
+        unique(meta$celltype)
+      )
+      
+      p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
+        scale_color_manual(values = celltype_color_map, name = "celltype")
+    } else {
+      # celltype_colorsがない場合はデフォルト
+      p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
+        scale_color_manual(values = default_disc(nlevels(df$grp)), name = "celltype")
+    }
 
   } else if (mode == "state") {
     if (is.null(state_idx))
       stop("state モードには state_idx が必要です（BIN×Allstatesで作ったもの）。")
     df$grp <- factor(state_idx)
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.2, alpha = 0.7) +
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = grp), size = 0.4, alpha = 0.7) +
       scale_color_manual(values = default_disc(nlevels(df$grp)), name = "state")
   } else if (mode == "energy") {
     if (is.null(state_idx)) stop("energy モードには state_idx が必要です。")
@@ -126,11 +188,11 @@ base_plot <- function(umap, mode = "none", meta = NULL, E = NULL,
     if (max(state_idx, na.rm = TRUE) > length(E))
       stop("E の長さと state_idx が不整合です。")
     df$val <- as.numeric(E[state_idx])
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = val), size = 0.2, alpha = 0.7) +
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2, color = val), size = 0.4, alpha = 0.7) +
       scale_color_viridis_c(name = "Energy")
 
   } else {
-    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2), color = "grey85", size = 0.2, alpha = 0.6)
+    p <- p + geom_point(data = df, aes(UMAP_1, UMAP_2), color = "grey85", size = 0.4, alpha = 0.6)
   }
   p <- p + guides(color = "none", fill = "none") + theme(legend.position = "none")
   p + coord_equal() + theme_classic(base_size = 12) +
@@ -256,38 +318,93 @@ sparsify_by_threshold <- function(Tmat, tau = 1e-3, mode = c("abs","quantile")) 
   A
 }
 
-# needs: Matrix
-transition_matrix_from_E <- function(E, S, beta = 1, kernel = c("metropolis","glauber")) {
+##------------------------------------------------------------------------------
+## 転移行列の生成（Metropolis / Glauber）＋ 時系列制約オプション付き
+##------------------------------------------------------------------------------
+transition_matrix_from_E <- function(
+  E,
+  S,
+  beta   = 1,
+  kernel = c("metropolis", "glauber"),
+  time_state = NULL,   # 長さPの「状態ごとの時間」(例: 36,48,72,96 の平均など)
+  tol = 0              # time_state[j] < time_state[i] - tol を禁止（単位は time_state と同じ）
+) {
   kernel <- match.arg(kernel)
-  P <- nrow(S); Sdim <- ncol(S)
-  # 状態→行番号の辞書（ハッシュ）
-  key <- function(v) paste0(v, collapse = "")
+  P     <- nrow(S)
+  Sdim  <- ncol(S)
+
+  # 状態 → 行番号の辞書（ハッシュ）
+  key  <- function(v) paste0(v, collapse = "")
   keys <- apply(S, 1, key)
   idx_map <- setNames(seq_len(P), keys)
 
-  # 近傍（1ビット反転）の列挙と受理確率の計算
-  ii <- integer(0); jj <- integer(0); xx <- numeric(0)  # triplets for sparse
-  for (p in 1:P) {
+  ii <- integer(0)
+  jj <- integer(0)
+  xx <- numeric(0)   # triplet 形式で sparse に詰める
+
+  for (p in seq_len(P)) {
     s <- S[p, ]
-    # 反転候補 Sdim 個
+
+    # 1ビット反転した近傍 Sdim 個を作る
     nei <- matrix(rep(s, each = Sdim), nrow = Sdim)
-    nei[cbind(1:Sdim, 1:Sdim)] <- -nei[cbind(1:Sdim, 1:Sdim)]
+    nei[cbind(seq_len(Sdim), seq_len(Sdim))] <- -nei[cbind(seq_len(Sdim), seq_len(Sdim))]
+
     nkeys <- apply(nei, 1, key)
-    qidx  <- unname(idx_map[nkeys])  # 遷移先インデックス（整数）
-    # ΔE
+    qidx  <- unname(idx_map[nkeys])   # 遷移先インデックス（長さ Sdim）
+
+    # ΔE = E(q) - E(p)
     dE <- E[qidx] - E[p]
-    # 受理確率
-    a <- if (kernel == "metropolis") pmin(1, exp(-beta * dE)) else 1/(1 + exp(beta * dE))
-    # 提案は一様：q_i = 1/Sdim
-    pij <- (1 / Sdim) * a
-    # 自己遷移確率
-    p_self <- 1 - sum(pij)
-    # 追加（自己遷移）
-    ii <- c(ii, rep(p, 1 + length(qidx)))
+
+    # 受理確率 a
+    if (kernel == "metropolis") {
+      a <- pmin(1, exp(-beta * dE))
+    } else {
+      a <- 1 / (1 + exp(beta * dE))   # Glauber
+    }
+
+    # 提案分布は一様：1/Sdim
+    pij <- (1 / Sdim) * a            # 長さ Sdim
+
+    ##---------------------------
+    ## 時系列制約: 明らかに過去へ戻る遷移を 0 にする
+    ##---------------------------
+    if (!is.null(time_state)) {
+      tp <- time_state[p]
+      tq <- time_state[qidx]
+
+      # 両方NAでないものだけ判定し、「tp - tol より明らかに前」を禁止
+      forbid <- !is.na(tp) & !is.na(tq) & (tq < tp - tol)
+
+      pij[forbid] <- 0
+    }
+
+    # 自己遷移確率（残った pij の合計から計算）
+    sum_pij <- sum(pij)
+    if (sum_pij > 1) {
+      # 数値誤差で 1 をわずかに超える場合の保険
+      pij     <- pij / sum_pij
+      sum_pij <- 1
+    }
+
+    p_self <- 1 - sum_pij
+    if (p_self < 0) {
+      # 数値誤差でマイナスに落ちたときの保険
+      p_self <- 0
+    }
+
+    # triplet に自己遷移 + 近傍遷移を追加
+    ii <- c(ii, rep.int(p, 1 + length(qidx)))
     jj <- c(jj, c(p, qidx))
     xx <- c(xx, c(p_self, pij))
   }
-  Matrix::sparseMatrix(i = ii, j = jj, x = xx, dims = c(P, P), symmetric = FALSE)
+
+  Matrix::sparseMatrix(
+    i     = ii,
+    j     = jj,
+    x     = xx,
+    dims  = c(P, P),
+    symmetric = FALSE
+  )
 }
 
 # 汎用: 系列ごとの点数を数えて、線/点を自動で出し分け
@@ -338,9 +455,10 @@ compute_curve <- function(S_mat, h, J, g, epsilons, major_vec, panel_title){
   df_long
 }
 
-time_points <- c(36, 48, 72)
+time_points <- c(36, 48, 72, 96)
 
-epsilons    <- time_points / 72  # 例：共変量強度 ε として正規化
+# 例：共変量強度 ε として正規化
+epsilons    <- (time_points - min(time_points)) / (max(time_points) - min(time_points))
 
 # Energy Calculation for cov model
 E_with_cov <- function(s, h, J, g, eps) {
@@ -356,15 +474,13 @@ E_with_cov <- function(s, h, J, g, eps) {
 
 # Time Character to Numeric
 .timevec <- list(
-    "cont-24h" = 0.25,
-    "cont-36h" = 0.375,
-    "cont-48h" = 0.5,
-    "cont-72h" = 0.75,
+    "cont-36h" = 0,
+    "cont-48h" = 0.2,
+    "cont-72h" = 0.6,
     "cont-96h" = 1,
-    "DAPT-24h" = 0.25,
-    "DAPT-36h" = 0.375,
-    "DAPT-48h" = 0.5,
-    "DAPT-72h" = 0.75,
+    "DAPT-36h" = 0,
+    "DAPT-48h" = 0.2,
+    "DAPT-72h" = 0.6,
     "DAPT-96h" = 1)
 
 # Label Stratification
@@ -383,14 +499,13 @@ fig2_markers <- c("Hp-SoxC", "Hp-Hnf6", "Hp-FoxJ1", "Hp-Chordin", "Hp-Ephrin", "
 
 fig3_markers <- c("Hp-Gad", "Hp-Hdc-3", "Hp-Th", "Hp-Chat", "Hp-Ddc", "Hp-Tph", "Hp-Syt1-1-like", "Hp-Otp", "Hp-Ngn", "Hp-Ac/Sc", "Hp-Awh", "Hp-Delta", "Hp-SoxC", "Hp-Smad-ip", "Hp-Rx", "Hp-Hbn", "Hp-Nkx2.1", "Hp-Six3", "Hp-FoxQ2-1-like", "Hp-FoxQ2-1", "Hp-HesC", "Hp-Soxb1")
 
-fig2_celltypes <- c("uncharacterized", "Pancreas", "Anus", "Endoderm", "Stomach_Intestine", "Intestine", "Stomach", "Skeleton", "Non_skeleton_mesoderm", "Blastocoelar_cell", "Germ_line_future", "Pigment", "Aboral_ectoderm", "Oral_ectoderm", "Ciliary_band", "Neurons")
+fig2_celltypes <- c("uncharacterized", "Pancreas", "Anus", "Endoderm", "Stomach_Intestine", "Intestine", "Stomach", "Skeleton", "Non_skeleton_mesoderm", "Blastocoelar_cell", "Germ_line_future", "Coelomic_pouch", "Pigment", "Aboral_ectoderm", "Oral_ectoderm", "Ciliary_band", "Neurons")
 
 sample_colors <- c(brewer.pal(9, "Set1"), "black")
 
 sample_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 
-# group_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
-group_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h')
+group_names <- c('cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h')
 
 conditions <- c("cont", "DAPT")
 
@@ -411,6 +526,8 @@ genes_ridgeplot_hpbase <- c("Hp-Pcna", "Hp-Srrm2-like", "Hp-Tpx2L1",
 genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     "Sp-Map215prh", "Sp-Ndc80L")
 
+energy_limits <- c(-6.5, 6.5)
+
 .firstup <- function(x){
   substr(x, 1, 1) <- toupper(substr(x, 1, 1))
   x
@@ -426,31 +543,6 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     GeneSetCollection(gsc)
 }
 
-# .stratifySeurat <- function(seurat.integrated, group_names){
-#     seurat.each1 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[1])]
-#     seurat.each2 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[2])]
-#     seurat.each3 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[3])]
-#     seurat.each4 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[4])]
-#     seurat.each5 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[5])]
-#     seurat.each6 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[6])]
-#     seurat.each7 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[7])]
-#     seurat.each8 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[8])]
-#     seurat.each9 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[9])]
-#     seurat.each10 <- seurat.integrated[,
-#         which(seurat.integrated@meta.data$sample == group_names[10])]
-#     list(seurat.each1, seurat.each2, seurat.each3, seurat.each4,
-#         seurat.each5, seurat.each6, seurat.each7, seurat.each8, seurat.each9, seurat.each10)
-# }
-
 .stratifySeurat <- function(seurat.integrated, group_names){
     seurat.each1 <- seurat.integrated[,
         which(seurat.integrated@meta.data$sample == group_names[1])]
@@ -464,10 +556,50 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
         which(seurat.integrated@meta.data$sample == group_names[5])]
     seurat.each6 <- seurat.integrated[,
         which(seurat.integrated@meta.data$sample == group_names[6])]
+    seurat.each7 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[7])]
+    seurat.each8 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[8])]
+    seurat.each9 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[9])]
+    seurat.each10 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[10])]
     list(seurat.each1, seurat.each2, seurat.each3, seurat.each4,
-        seurat.each5, seurat.each6)
+        seurat.each5, seurat.each6, seurat.each7, seurat.each8, seurat.each9, seurat.each10)
 }
 
+.stratifySeurat2 <- function(seurat.integrated, group_names){
+    seurat.each1 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[1])]
+    seurat.each2 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[2])]
+    seurat.each3 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[3])]
+    seurat.each4 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[4])]
+    list(seurat.each1, seurat.each2, seurat.each3, seurat.each4)
+}
+
+.stratifySeurat3 <- function(seurat.integrated, group_names){
+    seurat.each1 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[1])]
+    seurat.each2 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[2])]
+    seurat.each3 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[3])]
+    seurat.each4 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[4])]
+    seurat.each5 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[5])]
+    seurat.each6 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[6])]
+    seurat.each7 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[7])]
+    seurat.each8 <- seurat.integrated[,
+        which(seurat.integrated@meta.data$sample == group_names[8])]
+    list(seurat.each1, seurat.each2, seurat.each3, seurat.each4,
+        seurat.each5, seurat.each6, seurat.each7, seurat.each8)
+}
 
 .panelPlotMeta <- function(seuratList, group_names, feature){
     gList <- list()
@@ -502,10 +634,8 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     gList <- gList[order(names(gList))]
     
     # Patch work
-    # (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]] | gList[[5]]) / 
-    # (gList[[6]] | gList[[7]] | gList[[8]] | gList[[9]] | gList[[10]])
-    (gList[[1]] | gList[[2]] | gList[[3]]) / 
-    (gList[[4]] | gList[[5]] | gList[[6]])
+    (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]]) / 
+    (gList[[5]] | gList[[6]] | gList[[7]] | gList[[8]])
 }
 
 .panelPlot <- function(seuratList, group_names, features){
@@ -521,6 +651,23 @@ genes_ridgeplot_echinobase <- c("Sp-Pcna", "Sp-Srrm2", "Sp-Tpx2L1",
     gList <- gList[order(names(gList))]
     # Patch work
     (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]] | gList[[5]]) / (gList[[6]] | gList[[7]] | gList[[8]] | gList[[9]] | gList[[10]])
+}
+
+.panelPlot2 <- function(seuratList, group_names, features){
+    # Stratify
+    gList <- list()
+    length(gList) <- length(group_names)
+    for(i in seq_along(group_names)){
+        gList[[i]] <- FeaturePlot(seuratList[[i]], features=features,
+            reduction = "umap", pt.size=2, label.size=6) +
+            scale_color_viridis(option = "inferno", limits = c(0,1)) +
+            labs(title=group_names[i]) +
+            xlim(c(-15,15)) + ylim(c(-15,15))
+    }
+    names(gList) <- group_names
+    gList <- gList[order(names(gList))]
+    # Patch work
+    (gList[[1]] | gList[[2]] | gList[[3]] | gList[[4]])
 }
 
 .BarPlot <- function(seurat.integrated){

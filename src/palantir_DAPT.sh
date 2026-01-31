@@ -10,4 +10,4 @@
 #SBATCH -p node03-06
 SLURM_RESTART_COUNT=2
 
-Rscript src/dimplot_states.R $@
+python src/mypalantir_DAPT.py $@

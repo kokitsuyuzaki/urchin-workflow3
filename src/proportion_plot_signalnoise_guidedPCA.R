@@ -15,8 +15,8 @@ vals <- results$contrib_grouped_frac
 df <- data.frame(name = names(vals), value = as.numeric(vals), stringsAsFactors = FALSE)
 
 # 2) 区分（Wanted/Unwanted）
-wanted   <- c("celltype", "germlayer", "Phase", "seurat_clusters", "time")
-unwanted <- c("condition", "dbl.dens", "nCount_SCT", "nFeature_SCT", "percent.mt", "percent.rb")
+wanted   <- c("Phase", "germlayer", "time", "celltype", "seurat_clusters")
+unwanted <- c("nCount_SCT", "dbl.dens", "percent.mt", "percent.rb", "nFeature_SCT", "condition")
 
 df <- df %>%
   mutate(
@@ -43,28 +43,40 @@ df <- df %>%
   mutate(label = ifelse(name %in% names(rename_map), rename_map[name], name),
          label = cap1(label))
 
-# 4) 降順に並べ替え（棒を上から大→小）
-df <- df %>% arrange(desc(value))
-df$label <- factor(df$label, levels = df$label)
-df$group <- factor(df$group, levels = c("Wanted","Unwanted"))
+# ★★★ 特定の項目を明示的に除外 ★★★
+if(length(grep("neurons", infile, ignore.case=TRUE)) > 0){
+  df <- df %>% filter(!name %in% c("celltype", "germlayer"))
+}
+
+# 4) wanted, unwantedの定義順に並べ替え
+order_vec <- c(wanted, unwanted)
+order_vec <- order_vec[order_vec %in% df$name]  # データに存在するもののみ
+df$name <- factor(df$name, levels = order_vec)
+df <- df %>% arrange(name)
+# coord_flip()では下から上に並ぶので、逆順にしてlabelをfactor化
+df$label <- factor(df$label, levels = rev(df$label))
+df$group <- factor(df$group, levels = c("Wanted", "Unwanted"))
 
 # 5) プロット
 p <- ggplot(df, aes(x = label, y = value, fill = group)) +
   geom_col(width = 0.8) +
   coord_flip() +
-  scale_y_continuous(labels = percent_format(accuracy = 0.1)) +
+  scale_y_continuous(labels = function(x) x * 100) +
   scale_fill_manual(
-    name   = "Category",
+    name   = "",
     values = c(Wanted = "#2ca02c", Unwanted = "#d62728"),
     breaks = c("Wanted", "Unwanted"),
     labels = c("Wanted", "Unwanted")
   ) +
-  labs(x = NULL, y = "Explained fraction") +
+  labs(x = NULL, y = "Explained Variance Fraction (%)") +
   theme_bw(base_size = 12) +
   theme(
     legend.position = "top",
     panel.grid.major.y = element_blank(),
-    panel.grid.minor = element_blank()
+    panel.grid.minor = element_blank(),
+    axis.text = element_text(size = 16),
+    axis.title = element_text(size = 16),
+    legend.text = element_text(size = 16)
   )
 
 # Plot

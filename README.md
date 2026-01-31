@@ -25,14 +25,6 @@ This workflow consists of 14 workflows as follows:
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/doublet.png?raw=true)
 
-- **workflow/trajectory.smk**: Trajectory inference by `Monocle3`
-
-![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/trajectory.png?raw=true)
-
-- **workflow/plot.smk**: Plots against cluster labels (before celltyping)
-
-![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/plot.png?raw=true)
-
 - **workflow/report.smk**: Interactive report by `scTGIF`
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/report.png?raw=true)
@@ -41,21 +33,37 @@ This workflow consists of 14 workflows as follows:
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/celltyping.png?raw=true)
 
+- **workflow/landscaper.smk**: Energy Landscape Analysis by Landscaper
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/landscaper.png?raw=true)
+
+- **workflow/trajectory.smk**: Trajectory inference by `Monocle3`
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/trajectory.png?raw=true)
+
 - **workflow/velocity.smk**: RNA velocity analysis by `Velocyto` and `scVelo`.
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/velocity.png?raw=true)
+
+- **workflow/scegot.smk**: RNA velocity analysis by `scEGOT`.
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/scegot.png?raw=true)
+
+- **workflow/palantir.smk**: Trajectory inference by `Palantir`.
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/palantir.png?raw=true)
 
 - **workflow/template_matching.smk**: Template matching for Hp-Opn5L, Hp-Tph, and Hp-Delta
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/template_matching.png?raw=true)
 
-- **workflow/landscaper.smk**: Energy Landscape Analysis by Landscaper
-
-![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/landscaper.png?raw=true)
-
 - **workflow/signal_noise.smk**: Supervised Learning and Guided PCA
 
 ![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/signal_noise.png?raw=true)
+
+- **workflow/plot.smk**: Plots against cluster labels (before celltyping)
+
+![](https://github.com/kokitsuyuzaki/urchin-workflow3/blob/main/plot/plot.png?raw=true)
 
 ## Requirements
 - Bash: GNU bash, version 4.2.46(1)-release (x86_64-redhat-linux-gnu)
@@ -72,14 +80,16 @@ snakemake -s workflow/preprocess.smk -j 4 --use-singularity
 snakemake -s workflow/cellranger.smk -j 4 --use-singularity
 snakemake -s workflow/seurat.smk -j 4 --use-singularity
 snakemake -s workflow/doublet.smk -j 4 --use-singularity
+snakemake -s workflow/landscaper.smk -j 4 --use-singularity
 snakemake -s workflow/trajectory.smk -j 4 --use-singularity
 snakemake -s workflow/velocity.smk -j 4 --use-singularity
-snakemake -s workflow/plot.smk -j 4 --use-singularity
+snakemake -s workflow/scegot.smk -j 4 --use-singularity
+snakemake -s workflow/palantir.smk -j 4 --use-singularity
 snakemake -s workflow/report.smk -j 4 --use-singularity
 snakemake -s workflow/celltyping.smk -j 4 --use-singularity
 snakemake -s workflow/template_matching.smk -j 4 --use-singularity
-snakemake -s workflow/landscaper.smk -j 4 --use-singularity
 snakemake -s workflow/signalnoise.smk -j 4 --use-singularity
+snakemake -s workflow/plot.smk -j 4 --use-singularity
 ```
 
 ### In Open Grid Engine
@@ -91,14 +101,16 @@ snakemake -s workflow/preprocess.smk -j 32 --cluster qsub --latency-wait 600 --u
 snakemake -s workflow/cellranger.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/seurat.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/doublet.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
+snakemake -s workflow/landscaper.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/trajectory.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/velocity.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
-snakemake -s workflow/plot.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
+snakemake -s workflow/scegot.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
+snakemake -s workflow/palantir.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/report.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/celltyping.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/template_matching.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
-snakemake -s workflow/landscaper.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 snakemake -s workflow/signalnoise.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
+snakemake -s workflow/plot.smk -j 32 --cluster qsub --latency-wait 600 --use-singularity
 ```
 
 ### In Slurm
@@ -110,14 +122,16 @@ snakemake -s workflow/preprocess.smk -j 32 --cluster sbatch --latency-wait 600 -
 snakemake -s workflow/cellranger.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/seurat.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/doublet.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
+snakemake -s workflow/landscaper.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/trajectory.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/velocity.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
-snakemake -s workflow/plot.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
+snakemake -s workflow/scegot.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
+snakemake -s workflow/palantir.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/report.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/celltyping.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/template_matching.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
-snakemake -s workflow/landscaper.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 snakemake -s workflow/signalnoise.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
+snakemake -s workflow/plot.smk -j 32 --cluster sbatch --latency-wait 600 --use-singularity
 ```
 
 ## License

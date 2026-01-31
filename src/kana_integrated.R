@@ -13,5 +13,7 @@ counts(sce) <- NULL
 altExp(sce) <- NULL
 altExp(sce) <- NULL
 
+reducedDims(sce)$UMAP <- Embeddings(seurat.integrated, "umap")
+
 # Save
 saveRDS(sce, file=outfile)

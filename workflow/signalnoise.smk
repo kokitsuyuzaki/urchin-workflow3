@@ -6,13 +6,16 @@ from snakemake.utils import min_version
 #################################
 min_version("6.5.3")
 
+SAMPLES = ['cont-24h', 'cont-36h', 'cont-48h', 'cont-72h', 'cont-96h', 'DAPT-24h', 'DAPT-36h', 'DAPT-48h', 'DAPT-72h', 'DAPT-96h']
 
 rule all:
     input:
         'plot/hpbase/integrated/proportion_plot_supervised.png',
         'plot/hpbase/integrated/proportion_plot_supervised_neurons.png',
         'plot/hpbase/integrated/proportion_plot_guidedpca.png',
-        'plot/hpbase/integrated/proportion_plot_guidedpca_neurons.png'
+        'plot/hpbase/integrated/proportion_plot_guidedpca_neurons.png',
+        expand('plot/hpbase/{sample}/proportion_plot_guidedpca.png',
+            sample=SAMPLES)
 
 #################################
 # Preprocessing
@@ -25,7 +28,7 @@ rule signalnoise_preprocess:
     output:
         'output/hpbase/integrated/signalnoise.RData'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20251014'
     resources:
         mem_mb=1000000
     benchmark:
@@ -42,7 +45,7 @@ rule signalnoise_label_integrated_neurons:
     output:
         'output/hpbase/integrated/signalnoise_neurons.RData'
     container:
-        'docker://koki/urchin_workflow_seurat:20230616'
+        'docker://koki/urchin_workflow_seurat:20251014'
     resources:
         mem_mb=1000000
     benchmark:
@@ -51,6 +54,22 @@ rule signalnoise_label_integrated_neurons:
         'logs/signalnoise_label_integrated_neurons.log'
     shell:
         'src/label_integrated_neurons.sh {input} {output} >& {log}'
+
+rule signalnoise_label_sample:
+    input:
+        'output/hpbase/integrated/signalnoise.RData'
+    output:
+        'output/hpbase/{sample}/signalnoise.RData'
+    container:
+        'docker://koki/urchin_workflow_seurat:20251014'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/signalnoise_label_integrated_{sample}.txt'
+    log:
+        'logs/signalnoise_label_integrated_{sample}.log'
+    shell:
+        'src/label_sample.sh {wildcards.sample} {input} {output} >& {log}'
 
 #################################
 # Supervised learning
@@ -122,6 +141,22 @@ rule signalnoise_guidedPCA_neurons:
     shell:
         'src/signalnoise_guidedPCA.sh {input} {output} >& {log}'
 
+rule signalnoise_guidedPCA_sample:
+    input:
+        'output/hpbase/{sample}/signalnoise.RData'
+    output:
+        'output/hpbase/{sample}/signalnoise_guidedpca.RData'
+    container:
+        'docker://koki/urchin_workflow_signalnoise:20250821'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/signalnoise_guidedPCA_{sample}.txt'
+    log:
+        'logs/signalnoise_guidedPCA_{sample}.log'
+    shell:
+        'src/signalnoise_guidedPCA.sh {input} {output} >& {log}'
+
 #################################
 # Visualization
 #################################
@@ -188,3 +223,19 @@ rule proportion_plot_signalnoise_guidedPCA_neurons:
         'logs/proportion_plot_signalnoise_guidedPCA_neurons.log'
     shell:
         'src/proportion_plot_signalnoise_guidedPCA.sh {input} {output} >& {log}'
+
+rule proportion_plot_signalnoise_guidedPCA_sample:
+    input:
+        'output/hpbase/{sample}/signalnoise_guidedpca.RData'
+    output:
+        'plot/hpbase/{sample}/proportion_plot_guidedpca.png'
+    container:
+        'docker://koki/urchin_workflow_signalnoise:20250821'
+    resources:
+        mem_mb=1000000
+    benchmark:
+        'benchmarks/proportion_plot_signalnoise_guidedPCA_{sample}.txt'
+    log:
+        'logs/proportion_plot_signalnoise_guidedPCA_{sample}.log'
+    shell:
+        'src/proportion_plot_signalnoise_guidedPCA_sample.sh {input} {output} >& {log}'

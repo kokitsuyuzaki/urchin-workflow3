@@ -6,14 +6,9 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[2]
 
 # Loading
 all_states_integrated <- unlist(read.delim('plot/hpbase/integrated_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+bin_data_integrated <- unlist(read.delim('output/hpbase/integrated/binpca/BIN_DATA.tsv', header=FALSE, sep="|"))
 basin_integrated <- unlist(read.table('plot/hpbase/integrated_cov/Landscaper/Basin.tsv', header=FALSE))
-load('output/hpbase/integrated/seurat_annotated.RData')
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
+load('output/hpbase/integrated/seurat_annotated_landscaper.RData')
 
 # Sort
 names(all_states_integrated) <- NULL
@@ -36,9 +31,31 @@ basin_integrated_sorted[target_integrated2] <- 1
 seurat.integrated$basin <- basin_integrated_sorted
 
 # Plot
-g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", label=FALSE, pt.size=1, label.size=6, cols=c(8,3)) + NoLegend()
+g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", label=FALSE, pt.size=1, label.size=6, cols=c(8,3)) + NoLegend() +
+theme(axis.line = element_blank(),
+           axis.text.x = element_blank(),
+           axis.text.y = element_blank(),
+           axis.ticks = element_blank(),
+           axis.title.x = element_blank(),
+           axis.title.y = element_blank(),
+           panel.background = element_blank(),
+           panel.border = element_blank(),
+           panel.grid.major = element_blank(),
+           panel.grid.minor = element_blank(),
+           plot.background = element_blank())
 ggsave(file=outfile1, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", split.by="sample", label=FALSE, ncol=5, pt.size=1, label.size=6, cols=c(8,3)) + NoLegend()
-ggsave(file=outfile2, g, dpi=200, width=20, height=12)
+g <- DimPlot(seurat.integrated, reduction = "umap", group.by="basin", split.by="sample", label=FALSE, ncol=3, pt.size=1, label.size=6, cols=c(8,3)) + NoLegend() +
+theme(axis.line = element_blank(),
+           axis.text.x = element_blank(),
+           axis.text.y = element_blank(),
+           axis.ticks = element_blank(),
+           axis.title.x = element_blank(),
+           axis.title.y = element_blank(),
+           panel.background = element_blank(),
+           panel.border = element_blank(),
+           panel.grid.major = element_blank(),
+           panel.grid.minor = element_blank(),
+           plot.background = element_blank())
+ggsave(file=outfile2, g, dpi=200, width=20, height=13)

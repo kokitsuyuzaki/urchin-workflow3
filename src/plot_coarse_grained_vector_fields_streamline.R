@@ -22,9 +22,9 @@ outfile11 <- args[18]
 outfile12 <- args[19]
 outfile13 <- args[20]
 outfile14 <- args[21]
-# infile1 <- 'output/hpbase/integrated/seurat_annotated.RData'
-# infile2 <- 'output/hpbase/cont/seurat_annotated.RData'
-# infile3 <- 'output/hpbase/cont/sbmfcv/BIN_DATA_new.tsv'
+# infile1 <- 'output/hpbase/integrated/seurat_annotated_landscaper.RData'
+# infile2 <- 'output/hpbase/cont/seurat_annotated_landscaper.RData'
+# infile3 <- 'output/hpbase/cont/sbmfcv/BIN_DATA.tsv'
 # infile4 <- 'plot/hpbase/cont/Landscaper/Allstates.tsv'
 # infile5 <- 'plot/hpbase/cont/Landscaper/E.tsv'
 # infile6 <- 'plot/hpbase/cont/P_metropolis_cg.RData'
@@ -36,11 +36,6 @@ meta <- seurat.integrated@meta.data
 umap <- Embeddings(seurat.integrated, "umap")[, 1:2, drop = FALSE]
 
 load(infile2)
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
 
 meta <- meta[colnames(seurat.integrated), ]
 umap <- umap[colnames(seurat.integrated), ]
@@ -74,10 +69,15 @@ layers_m <- if (nrow(grid_m) > 0) list(
   metR::geom_streamline(
     data = grid_m,
     aes(x = x, y = y, dx = dx, dy = dy, alpha = speed),
-    L = 10, res = 1,
-    arrow = arrow(length = unit(0.1, "cm"), type = "closed"),
+    L = 1,
+    min.L = 1,
+    res = 2,
+    S = 1.5,
+    method = "rk4",  # Runge-Kutta法（より正確）
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed", angle = 30),
     lineend = "round",
-    linewidth = 0.1,
+    linewidth = 0.4,
+    n = 13,
     colour = "black"
   ),
   scale_alpha(range = c(0.3, 1), guide = "none")
@@ -144,10 +144,15 @@ layers_g <- if (nrow(grid_g) > 0) list(
   metR::geom_streamline(
     data = grid_g,
     aes(x = x, y = y, dx = dx, dy = dy, alpha = speed),
-    L = 10, res = 1,
-    arrow = arrow(length = unit(0.1, "cm"), type = "closed"),
+    L = 1,
+    min.L = 1,
+    res = 2,
+    S = 1.5,
+    method = "rk4",  # Runge-Kutta法（より正確）
+    arrow = arrow(length = unit(0.2, "cm"), type = "closed", angle = 30),
     lineend = "round",
-    linewidth = 0.1,
+    linewidth = 0.4,
+    n = 13,
     colour = "black"
   ),
   scale_alpha(range = c(0.3, 1), guide = "none")

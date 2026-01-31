@@ -1,46 +1,56 @@
 source("src/Functions.R")
 
 # Parameter
-infile1 <- commandArgs(trailingOnly=TRUE)[1]
-infile2 <- commandArgs(trailingOnly=TRUE)[2]
-outfile1 <- commandArgs(trailingOnly=TRUE)[3]
-outfile2 <- commandArgs(trailingOnly=TRUE)[4]
+infile1  <- commandArgs(trailingOnly = TRUE)[1]
+infile2  <- commandArgs(trailingOnly = TRUE)[2]
+outfile1 <- commandArgs(trailingOnly = TRUE)[3]
+outfile2 <- commandArgs(trailingOnly = TRUE)[4]
 # infile1 <- 'plot/hpbase/integrated/P_metropolis.tsv'
 # infile2 <- 'plot/hpbase/integrated/P_glauber.tsv'
 
-# Loading
-P_m <- t(as.matrix(read.table(infile1, header=FALSE)))
-P_g <- t(as.matrix(read.table(infile2, header=FALSE)))
+# Settings
+n_steps <- 10   # 1,2,5,10 など自由に
+# tol / max_iter はもう不要（途中で止めない）
 
+# Loading (row-stochastic P[i,j] = i -> j)
+P_m <- as.matrix(read.table(infile1, header = FALSE))
+P_g <- as.matrix(read.table(infile2, header = FALSE))
+
+# -------------------------
 # Random walk (metropolis)
-P_m <- P_m %*% diag(rep(1, length=nrow(P_m)))
+# -------------------------
 
-iter <- 1
-tol <- 100
-while(iter <= 100 & tol > 1e-6){
-    P_m_new <- P_m %*% P_m
-    tol <- max(abs(P_m_new - P_m))
-    P_m <- P_m_new
-    iter <- iter + 1
+P_m_list <- vector("list", n_steps + 1)
+P_m_list[[1]] <- diag(nrow(P_m))   # P^0 = I
+
+P_m_cur <- P_m_list[[1]]
+for (iter in seq_len(n_steps)) {
+  P_m_cur <- P_m_cur %*% P_m
+  P_m_list[[iter + 1]] <- P_m_cur
 }
-print(iter)
+names(P_m_list) <- paste0("step_", 0:n_steps)
 
+print(paste("Metropolis steps:", n_steps))
+
+# -------------------------
 # Random walk (glauber)
-P_g <- P_g %*% diag(rep(1, length=nrow(P_g)))
+# -------------------------
 
-iter <- 1
-tol <- 100
-while(iter <= 100 & tol > 1e-6){
-    P_g_new <- P_g %*% P_g
-    tol <- max(abs(P_g_new - P_g))
-    P_g <- P_g_new
-    iter <- iter + 1
+P_g_list <- vector("list", n_steps + 1)
+P_g_list[[1]] <- diag(nrow(P_g))   # P^0 = I
+
+P_g_cur <- P_g_list[[1]]
+for (iter in seq_len(n_steps)) {
+  P_g_cur <- P_g_cur %*% P_g
+  P_g_list[[iter + 1]] <- P_g_cur
 }
-print(iter)
+names(P_g_list) <- paste0("step_", 0:n_steps)
 
-# Save
-write.table(P_m, file=outfile1,
-    quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
-write.table(P_g, file=outfile2,
-    quote=FALSE, sep="\t", row.names=FALSE, col.names=FALSE)
-    
+print(paste("Glauber steps:", n_steps))
+
+# -------------------------
+# Save (list output)
+# -------------------------
+
+save(P_m_list, file = outfile1)
+save(P_g_list, file = outfile2)

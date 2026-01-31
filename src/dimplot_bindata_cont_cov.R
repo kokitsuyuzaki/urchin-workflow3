@@ -1,16 +1,13 @@
 source("src/Functions.R")
 
 # Parameter
-outfile <- commandArgs(trailingOnly=TRUE)[1]
+infile1 <- commandArgs(trailingOnly=TRUE)[1]
+infile2 <- commandArgs(trailingOnly=TRUE)[2]
+outfile <- commandArgs(trailingOnly=TRUE)[3]
 
 # Loading
-bindata_cont <- read.table('output/hpbase/cont/sbmfcv/BIN_DATA.tsv', header=FALSE)
-load('output/hpbase/cont_stratified/seurat_annotated.RData')
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
+load(infile1)
+bindata_cont <- read.table(infile2, header=FALSE)
 
 # Assign Labels
 for(i in seq_len(ncol(bindata_cont))){

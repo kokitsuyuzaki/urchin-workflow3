@@ -5,8 +5,8 @@ infile1 <- commandArgs(trailingOnly=TRUE)[2]
 infile2 <- commandArgs(trailingOnly=TRUE)[3]
 outfile <- commandArgs(trailingOnly=TRUE)[4]
 meth <- commandArgs(trailingOnly=TRUE)[5]
-# infile1 = "output/hpbase/integrated/seurat_annotated.RData"
-# infile2 = "output/hpbase/integrated/dynverse/start_id_celltype.RData"
+# infile1 = "output/hpbase/DAPT/seurat_annotated.RData"
+# infile2 = "output/hpbase/DAPT/dynverse/start_id_celltype.RData"
 
 # Loading
 load(infile1)
@@ -38,7 +38,15 @@ dataset <- add_prior_information(
   start_id = start_id)
 
 # Trajectory Inference
-model <- infer_trajectory(dataset, meth)
+model <- infer_trajectory(dataset, 
+                         method = meth,
+                         parameters = list(
+                           n_neighbors = 30,      # より多くの近傍を考慮（デフォルト: 15）
+                           n_comps = 50,         # より多くのPCA成分を使用
+                           n_dcs = 15,           # diffusion components
+                           resolution = 1,       # クラスタリング解像度
+                           embedding_type = "fa" # or "umap"
+                         ))
 
 # Save
 save(model, file=outfile)

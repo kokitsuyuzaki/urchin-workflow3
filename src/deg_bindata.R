@@ -12,7 +12,7 @@ colnames(bindata) <- paste0("Var", seq(ncol(bindata)))
 
 # Marker detection
 for(i in seq_len(ncol(bindata))){
-	cmd <- paste0("seurat.integrated$Var", i, "<-bindata[,", i, "]")
+	cmd <- paste0("seurat.integrated$Var", i, "<- bindata[,", i, "]")
 	eval(parse(text=cmd))
 }
 outList <- lapply(seq(ncol(bindata)), function(i){

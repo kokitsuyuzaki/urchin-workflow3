@@ -9,6 +9,7 @@ outfile2 <- commandArgs(trailingOnly=TRUE)[3]
 load(infile)
 
 # Preprocessing
+Idents(seurat.integrated) <- seurat.integrated$celltype
 Idents(seurat.integrated) <- factor(Idents(seurat.integrated), levels=fig2_celltypes)
 
 # Plot

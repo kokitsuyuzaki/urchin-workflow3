@@ -18,6 +18,35 @@ adata2 = scanpy.read_h5ad(infile2)
 adata1.obs['clusters'] = pd.Categorical(adata2.obs['seurat_clusters'])
 adata1.obsm['X_pca'] = adata2.obsm['X_pca']
 adata1.obsm['X_umap'] = adata2.obsm['X_umap']
+# 既存の座標・クラスタ移植
+if "X_pca" in adata2.obsm:  
+    adata1.obsm["X_pca"] = adata2.obsm["X_pca"].copy()
+if "X_umap" in adata2.obsm: 
+    adata1.obsm["X_umap"] = adata2.obsm["X_umap"].copy()
+
+# クラスタを転送
+if "seurat_clusters" in adata2.obs:
+    adata1.obs["clusters"] = pd.Categorical(adata2.obs["seurat_clusters"])
+
+# celltypeとcelltype_colorsを安全に転送
+if "celltype" in adata2.obs:
+    # 文字列に変換し、NAを処理
+    celltype_values = adata2.obs["celltype"].values
+    # numpy配列の場合の処理
+    if hasattr(celltype_values, 'astype'):
+        celltype_str = celltype_values.astype(str)
+    else:
+        celltype_str = [str(x) for x in celltype_values]
+    adata1.obs["celltype"] = celltype_str
+
+if "celltype_colors" in adata2.obs:
+    # 同様に色情報も文字列化
+    colors_values = adata2.obs["celltype_colors"].values
+    if hasattr(colors_values, 'astype'):
+        colors_str = colors_values.astype(str)
+    else:
+        colors_str = [str(x) for x in colors_values]
+    adata1.obs["celltype_colors"] = colors_str
 
 # Preprocessing
 scv.pp.filter_genes(adata1, min_shared_counts=20)

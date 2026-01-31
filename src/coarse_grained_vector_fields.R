@@ -9,8 +9,8 @@ infile5 <- args[5]
 infile6 <- args[6]
 outfile1 <- args[7]
 outfile2 <- args[8]
-# infile1 <- 'output/hpbase/integrated/seurat_annotated.RData'
-# infile2 <- 'output/hpbase/cont/seurat_annotated.RData'
+# infile1 <- 'output/hpbase/integrated/seurat_annotated_landscaper.RData'
+# infile2 <- 'output/hpbase/cont/seurat_annotated_landscaper.RData'
 # infile3 <- 'output/hpbase/cont/sbmfcv/BIN_DATA.tsv'
 # infile4 <- 'plot/hpbase/cont/Landscaper/Allstates.tsv'
 # infile5 <- 'plot/hpbase/cont/P_metropolis.tsv'
@@ -19,14 +19,7 @@ outfile2 <- args[8]
 # Load
 load(infile1)
 umap <- Embeddings(seurat.integrated, "umap")[, 1:2, drop = FALSE]
-
 load(infile2)
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
-
 umap <- umap[colnames(seurat.integrated), ]
 
 BIN <- as.matrix(read.table(infile3, header=FALSE))

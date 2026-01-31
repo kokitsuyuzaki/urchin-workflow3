@@ -15,7 +15,7 @@ TIMES_STR = ['24h_stratified', '36h_stratified', '48h_stratified', '72h_stratifi
 CLUSTERS = list(range(41))
 NEURONS_CLUSTERS = list(range(18))
 
-container: 'docker://koki/urchin_workflow_seurat:20230616'
+container: 'docker://koki/urchin_workflow_seurat:20251014'
 
 rule all:
     input:
@@ -64,8 +64,8 @@ rule all:
         'plot/hpbase/integrated/dimplot_cluster11.png',
         'plot/hpbase/integrated/dimplot_cluster11_splitby.png',
         # Dotplot
-        expand('plot/hpbase/{sample}/dotplot_celltype.png',
-            sample=SAMPLES),
+        'plot/hpbase/integrated/dotplot_celltype.png',
+        'plot/hpbase/integrated/dotplot_celltype_splitby.png',
         'plot/hpbase/integrated/heatmap_celltype_cont.png',
         'plot/hpbase/integrated/heatmap_celltype_DAPT.png',
         'plot/hpbase/integrated/heatmap_celltype_ratio.png',
@@ -82,7 +82,7 @@ rule label_integrated:
     output:
         'output/hpbase/integrated/seurat_annotated.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated.txt'
     log:
@@ -96,7 +96,7 @@ rule seurat_findallmarkers_integrated_annotated:
     output:
         'output/hpbase/integrated/allmarkers_annotated.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findallmarkers_integrated_annotated.txt'
     log:
@@ -110,7 +110,7 @@ rule seurat_findconservedmarkers_integrated_annotated:
     output:
         'output/hpbase/integrated/conservedmarkers_annotated.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findconservedmarkers_integrated_annotated.txt'
     log:
@@ -125,7 +125,7 @@ rule label_integrated_neurons:
     output:
         'output/hpbase/integrated/seurat_annotated_neurons.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated_neurons.txt'
     log:
@@ -139,7 +139,7 @@ rule seurat_findallmarkers_integrated_annotated_neurons:
     output:
         'output/hpbase/integrated/allmarkers_annotated_neurons.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findallmarkers_integrated_annotated_neurons.txt'
     log:
@@ -153,7 +153,7 @@ rule seurat_findconservedmarkers_integrated_annotated_neurons:
     output:
         'output/hpbase/integrated/conservedmarkers_annotated_neurons.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findconservedmarkers_integrated_annotated_neurons.txt'
     log:
@@ -167,7 +167,7 @@ rule label_integrated_neurons_reclustering:
     output:
         'output/hpbase/integrated/seurat_annotated_neurons_reclustering.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated_neurons_reclustering.txt'
     log:
@@ -181,7 +181,7 @@ rule seurat_findallmarkers_integrated_annotated_neurons_reclustering:
     output:
         'output/hpbase/integrated/allmarkers_annotated_neurons_reclustering.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findallmarkers_integrated_annotated_neurons_reclustering.txt'
     log:
@@ -195,7 +195,7 @@ rule seurat_findconservedmarkers_integrated_annotated_neurons_reclustering:
     output:
         'output/hpbase/integrated/conservedmarkers_annotated_neurons_reclustering.xlsx'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/seurat_findconservedmarkers_integrated_annotated_neurons_reclustering.txt'
     log:
@@ -209,7 +209,7 @@ rule label_integrated_neurons_clusters:
     output:
         'output/hpbase/integrated/seurat_annotated_neurons_cluster{ncl}.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated_neurons_cluster{ncl}.txt'
     log:
@@ -223,7 +223,7 @@ rule label_integrated_clusters:
     output:
         'output/hpbase/integrated/seurat_annotated_cluster{cl}.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_integrated_hpbase_integrated_cluster{cl}.txt'
     log:
@@ -248,7 +248,7 @@ rule label_stratification:
         expand('output/hpbase/{time_str}/seurat_annotated.RData',
             time_str=TIMES_STR)
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_stratification.txt'
     log:
@@ -264,7 +264,7 @@ rule label_transfer:
     output:
         'output/hpbase/{sample}/seurat_annotated_lt.RData'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/label_transfer_{sample}.txt'
     log:
@@ -279,7 +279,7 @@ rule kana_integrated:
     output:
         'output/hpbase/integrated/kana/integrated.rds'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_integrated.txt'
     log:
@@ -293,7 +293,7 @@ rule kana_integrated_neurons:
     output:
         'output/hpbase/integrated/kana/neurons.rds'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_integrated_neurons.txt'
     log:
@@ -307,7 +307,7 @@ rule kana_integrated_neurons_reclustering:
     output:
         'output/hpbase/integrated/kana/neurons_reclustering.rds'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_integrated_neurons_reclustering.txt'
     log:
@@ -321,7 +321,7 @@ rule kana_integrated_clusters:
     output:
         'output/hpbase/integrated/kana/cluster{cl}.rds'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_integrated_cluster{cl}.txt'
     log:
@@ -335,7 +335,7 @@ rule kana_integrated_neurons_clusters:
     output:
         'output/hpbase/integrated/kana/neurons_cluster{cl}.rds'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_integrated_cluster{cl}.txt'
     log:
@@ -351,7 +351,7 @@ rule kana_sample:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_{sample}.txt'
     log:
@@ -367,7 +367,7 @@ rule kana_condition:
     wildcard_constraints:
         condition='|'.join([re.escape(x) for x in CONDITIONS])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_condition_{condition}.txt'
     log:
@@ -383,7 +383,7 @@ rule kana_time:
     wildcard_constraints:
         time='|'.join([re.escape(x) for x in TIMES])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_time_{time}.txt'
     log:
@@ -399,7 +399,7 @@ rule kana_sample_stratified:
     wildcard_constraints:
         sample_str='|'.join([re.escape(x) for x in SAMPLES_STR])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_{sample_str}.txt'
     log:
@@ -415,7 +415,7 @@ rule kana_condition_stratified:
     wildcard_constraints:
         condition_str='|'.join([re.escape(x) for x in CONDITIONS_STR])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_condition_stratified_{condition_str}.txt'
     log:
@@ -431,7 +431,7 @@ rule kana_time_stratified:
     wildcard_constraints:
         time_str='|'.join([re.escape(x) for x in TIMES_STR])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/kana_time_stratified_{time_str}.txt'
     log:
@@ -450,7 +450,7 @@ rule dimplot_celltype:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_celltype_hpbase_{sample}.txt'
     log:
@@ -465,7 +465,7 @@ rule dimplot_celltype_integrated:
         'plot/hpbase/integrated/dimplot_celltype.png',
         'plot/hpbase/integrated/dimplot_celltype_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_celltype_integrated_hpbase_integrated.txt'
     log:
@@ -481,7 +481,7 @@ rule dimplot_germlayer:
     wildcard_constraints:
         sample='|'.join([re.escape(x) for x in SAMPLES])
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_germlayer_hpbase_{sample}.txt'
     log:
@@ -496,7 +496,7 @@ rule dimplot_germlayer_integrated:
         'plot/hpbase/integrated/dimplot_germlayer.png',
         'plot/hpbase/integrated/dimplot_germlayer_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_germlayer_integrated_hpbase_integrated.txt'
     log:
@@ -511,7 +511,7 @@ rule dimplot_neurons_integrated:
         'plot/hpbase/integrated/dimplot_neurons.png',
         'plot/hpbase/integrated/dimplot_neurons_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_neurons_integrated_hpbase_integrated.txt'
     log:
@@ -526,7 +526,7 @@ rule dimplot_cluster11_integrated:
         'plot/hpbase/integrated/dimplot_cluster11.png',
         'plot/hpbase/integrated/dimplot_cluster11_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_cluster11_integrated_hpbase_integrated.txt'
     log:
@@ -541,7 +541,7 @@ rule dimplot_neurons_reclustering_integrated:
         'plot/hpbase/integrated/dimplot_neurons_reclustering.png',
         'plot/hpbase/integrated/dimplot_neurons_reclustering_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dimplot_neurons_reclustering_integrated_hpbase_integrated.txt'
     log:
@@ -553,23 +553,6 @@ rule dimplot_neurons_reclustering_integrated:
 # Dotplot
 #################################
 # Figure 2
-rule dotplot_celltype:
-    input:
-        'output/hpbase/{sample}/seurat_annotated.RData'
-    output:
-        'plot/hpbase/{sample}/dotplot_celltype.png'
-    wildcard_constraints:
-        sample='|'.join([re.escape(x) for x in SAMPLES])
-    resources:
-        mem_mb=1000000
-    benchmark:
-        'benchmarks/dotplot_celltype_hpbase_{sample}.txt'
-    log:
-        'logs/dotplot_celltype_hpbase_{sample}.log'
-    shell:
-        'src/dotplot_celltype.sh {input} {output} >& {log}'
-
-# Figure 2
 rule dotplot_celltype_integrated:
     input:
         'output/hpbase/integrated/seurat_annotated.RData'
@@ -577,7 +560,7 @@ rule dotplot_celltype_integrated:
         'plot/hpbase/integrated/dotplot_celltype.png',
         'plot/hpbase/integrated/dotplot_celltype_splitby.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/dotplot_celltype_integrated_hpbase_integrated.txt'
     log:
@@ -599,7 +582,7 @@ rule heatmap_celltype_integrated:
         'plot/hpbase/integrated/heatmap_celltype_t_pval.png',
         'plot/hpbase/integrated/heatmap_celltype_wilcox_pval.png'
     resources:
-        mem_mb=1000000
+        mem_mb=100000000
     benchmark:
         'benchmarks/heatmap_celltype_integrated_hpbase_integrated.txt'
     log:

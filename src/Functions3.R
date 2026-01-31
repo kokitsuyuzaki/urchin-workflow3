@@ -5,6 +5,8 @@ library("dynmethods")
 library("babelwhale")
 library("Seurat")
 library("tidyverse")
+library("ggplot2")
+library("dplyr")
 
 # Singularityの設定
 test_singularity_installation(detailed = TRUE)

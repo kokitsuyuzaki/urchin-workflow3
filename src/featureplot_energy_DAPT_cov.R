@@ -7,17 +7,13 @@ outfile3 <- commandArgs(trailingOnly=TRUE)[3]
 outfile4 <- commandArgs(trailingOnly=TRUE)[4]
 outfile5 <- commandArgs(trailingOnly=TRUE)[5]
 outfile6 <- commandArgs(trailingOnly=TRUE)[6]
+outfile7 <- commandArgs(trailingOnly=TRUE)[7]
 
 # Loading
 all_states_DAPT <- unlist(read.delim('plot/hpbase/DAPT_cov/Landscaper/Allstates.tsv', header=FALSE, sep="|"))
-bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/sbmfcv/BIN_DATA.tsv', header=FALSE, sep="|"))
+bin_data_DAPT <- unlist(read.delim('output/hpbase/DAPT/binpca/BIN_DATA.tsv', header=FALSE, sep="|"))
 energy_DAPT <- unlist(read.table('plot/hpbase/DAPT_cov/Landscaper/E.tsv', header=FALSE))
-load('output/hpbase/DAPT_stratified/seurat_annotated.RData')
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
+load('output/hpbase/DAPT/seurat_annotated_landscaper.RData')
 
 # Sort
 names(all_states_DAPT) <- NULL
@@ -32,7 +28,7 @@ energy_DAPT_sorted <- as.matrix(energy_DAPT_sorted)
 rownames(energy_DAPT_sorted) <- colnames(seurat.integrated)
 
 # Assign Labels
-seurat.integrated$energy <- energy_DAPT_sorted
+seurat.integrated$energy <- - energy_DAPT_sorted
 
 # Seurat => SingleCellExperiment
 sce <- SingleCellExperiment(assays = list(counts = seurat.integrated@assays$RNA@counts))
@@ -47,23 +43,50 @@ sce <- make_hexbin(sce, nbins = 50, dimension_reduction = "UMAP")
 save(sce, file=outfile1)
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100))
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100)) + ggtitle("- Energy")
 ggsave(file=outfile2, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- plot_hexbin_meta(sce, col = "energy", action = "median", title = "")
+g <- plot_hexbin_meta(sce, col = "energy", action = "median", title = "") + ggtitle("- Energy")
 ggsave(file=outfile3, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100), limits=c(-7.0, 8.5))
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", pt.size=1) + scale_colour_gradientn(colours = viridis(100), limits=energy_limits) + ggtitle("- Energy")
 ggsave(file=outfile4, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- plot_hexbin_meta(sce, col = "energy", action = "median", title = "")
+g <- plot_hexbin_meta(sce, col = "energy", action = "median", title = "") + 
+     scale_fill_gradientn(colours = viridis(100), 
+                          limits = energy_limits,
+                          oob = scales::squish) +  # 範囲外の値を圧縮
+     ggtitle("- Energy")
 ggsave(file=outfile5, g, dpi=200, width=6, height=6)
 
 # Plot
-g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", split.by="sample", ncol=5, pt.size=2)
-png(file=outfile6, width=3000, height=600)
+g <- FeaturePlot(seurat.integrated, reduction = "umap", features="energy", split.by="sample", ncol=3, pt.size=2) + ggtitle("- Energy")
+png(file=outfile6, width=3000, height=750)
 print(g)
 dev.off()
+
+# 新規追加: エネルギーのマイナス値の等高線プロット（黄色ベース）
+df <- as.data.frame(seurat.integrated@reductions$umap@cell.embeddings)
+colnames(df) <- c("UMAP_1", "UMAP_2")
+df$neg_energy <- seurat.integrated$energy  # エネルギーのマイナス値
+
+g <- ggplot(df, aes(x = UMAP_1, y = UMAP_2)) +
+  geom_point(color = "grey60", size = 0.5, alpha = 0.4) +
+  stat_density_2d(aes(fill = ..density.., z = neg_energy), 
+                  geom = "tile", 
+                  contour = FALSE,
+                  n = 100,
+                  alpha = 0.45) +
+  scale_fill_gradient(low = "white", high = "#FFB300") +  # 黄色系のグラデーション
+  geom_density_2d(aes(z = neg_energy), 
+                  color = "#CC8800", 
+                  alpha = 0.7, 
+                  size = 0.4) +  # 濃い黄色の等高線
+  theme_void() +
+  theme(legend.position = 'none',
+        plot.background = element_rect(fill = "white", color = NA))
+
+ggsave(file=outfile7, g, dpi=200, width=6, height=6)

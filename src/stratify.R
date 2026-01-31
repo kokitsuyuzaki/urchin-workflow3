@@ -16,12 +16,6 @@ outfile10 <- commandArgs(trailingOnly=TRUE)[12]
 
 # Loading
 load(infile1)
-
-## Only Ectoderm in 24h, 36h, 48h samples
-target1 <- which(seurat.integrated@meta.data$germlayer == "Ectoderm")
-target2 <- grep("24h|36h|48h", seurat.integrated@meta.data$sample)
-seurat.integrated <- seurat.integrated[, intersect(target1, target2)]
-
 seurat.integrated.original <- seurat.integrated
 bindata <- read.table(infile2, header=FALSE)
 
